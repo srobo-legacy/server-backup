@@ -4,6 +4,8 @@ import ConfigParser
 import os
 import sys
 
+os.umask(0177)
+
 try :
     os.stat("backup.ini")
 except OSError:
