@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import sys
 import os
 import tarfile
 
@@ -24,5 +25,14 @@ my_addfile('ssh_host_rsa_key', '/etc/ssh/ssh_host_rsa_key')
 my_addfile('ssh_host_rsa_key.pub', '/etc/ssh/ssh_host_rsa_key.pub')
 my_addfile('ssh_host_key', '/etc/ssh/ssh_host_key')
 my_addfile('ssh_host_key.pub', '/etc/ssh/ssh_host_key.pub')
+
+try:
+    os.stat('/home/gerrit')
+    my_addfile('gerrit_ssh_host_dsa_key', '/home/gerrit/srdata/etc/ssh_host_dsa_key')
+    my_addfile('gerrit_ssh_host_dsa_key.pub', '/home/gerrit/srdata/etc/ssh_host_dsa_key.pub')
+    my_addfile('gerrit_ssh_host_rsa_key', '/home/gerrit/srdata/etc/ssh_host_rsa_key')
+    my_addfile('gerrit_ssh_host_rsa_key.pub', '/home/gerrit/srdata/etc/ssh_host_rsa_key.pub')
+except os.error:
+  sys.stderr.write("Gerrit doesn't appear to be installed, skipping\n")
 
 output.close()
