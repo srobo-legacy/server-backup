@@ -6,11 +6,6 @@ import tarfile
 # le privacy
 os.umask(0177)
 
-try:
-  os.makedirs('ide_repos', 0700)
-except os.error:
-  pass
-
 output = tarfile.open('ide_repo_backup.tar.gz', mode='w:gz')
 
 # Back up user repos: we only want the _master_ copies of everything, not the
