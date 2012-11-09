@@ -1,0 +1,9 @@
+This git repo contains scripts for backing up various wadges of data from the
+SR server into some kind of manipulatable form.
+
+Note that it doesn't back it up into the same format as in the server secrets
+git repo. This is because the server secrets goo is for configuring things,
+not for actually storing our data.
+
+There are also no scripts for restoring; this is because restoring isn't a
+frequent use case (nor should it ever be).
