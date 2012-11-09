@@ -25,4 +25,8 @@ for dir in list_of_dirs:
 # Also back up user settings. This contains team-status data too.
 output.add('settings', recursive=True)
 
+# Also the notifications directory: I've no idea what this really is, but it's
+# not large.
+output.add('notifications', recursive=True)
+
 output.close()
