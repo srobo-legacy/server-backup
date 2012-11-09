@@ -5,6 +5,7 @@ import os
 import sys
 import tarfile
 import tempfile
+import time
 
 os.umask(0177)
 
@@ -35,6 +36,7 @@ for s in list_of_dbs:
     # And put that into the tarfile.
     statres = os.stat(filename)
     info = tarfile.TarInfo(name="{0}.mysql".format(s))
+    info.mtime = time.time()
     info.size = statres.st_size
     output.addfile(tarinfo=info, fileobj=open(filename, 'r'))
     os.unlink(filename)

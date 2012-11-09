@@ -3,6 +3,7 @@
 import sys
 import os
 import tarfile
+import time
 
 os.umask(0177)
 
@@ -13,6 +14,7 @@ output = tarfile.open('secret_keys_backup.tar.gz', mode='w:gz')
 def my_addfile(tarname, srcfile):
     thestat = os.stat(srcfile)
     info = tarfile.TarInfo(name=tarname)
+    info.mtime = time.time()
     info.size = thestat.st_size
     output.addfile(tarinfo=info, fileobj=open(srcfile))
 
