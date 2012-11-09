@@ -9,6 +9,8 @@ import time
 import tempfile
 import argparse
 
+os.umask(0177)
+
 parser = argparse.ArgumentParser()
 parser.add_argument('what', help='What data to back up')
 parser.add_argument('output_file', help='Output tgz target, - for stdout')
