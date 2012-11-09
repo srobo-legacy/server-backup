@@ -2,6 +2,7 @@
 
 import sys
 import os
+import ldap
 from ldif import LDIFParser,LDIFWriter
 
 # Privacy please
@@ -18,11 +19,14 @@ class MyLDIF(LDIFParser):
       self.writer = LDIFWriter(output)
 
    def handle(self,dn,entry):
-      if dn == "cn=shell-users,ou=groups,o=sr" or dn == None:
-        print repr(dn)
-        print repr(entry)
+      if dn == "cn=shell-users,ou=groups,o=sr":
+        ponies = entry['memberUid']
+        self.writer.unparse(dn,[(ldap.MOD_REPLACE, 'memberUid', ponies)])
         return
-      self.writer.unparse(dn,entry)
+      elif dn == None:
+        return
+      else:
+        self.writer.unparse(dn,entry)
 
 parser = MyLDIF(open("tmp_ldap_ldif", 'rb'), open("ldap_backup", "wb"))
 parser.parse()
