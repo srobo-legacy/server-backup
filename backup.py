@@ -136,3 +136,11 @@ things = { 'ldap': do_ldap_backup,
            'ide' : do_ide_backup,
            'git' : do_git_backup,
          }
+
+output = None
+if args.output_file == '-':
+    output = tarfile.open(fileobj=sys.stdout, mode="w:gz")
+else:
+    output = tarfile.open(args.output_file, "w:gz")
+
+output.close()
