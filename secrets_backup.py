@@ -14,5 +14,6 @@ def my_addfile(tarname, srcfile):
     output.addfile(tarinfo=info, fileobj=open(srcfile))
 
 my_addfile('www.studentrobotics.org.crt', '/etc/pki/tls/certs/www.studentrobotics.org.crt')
+my_addfile('godaddy_bundle.crt', '/etc/pki/tls/certs/gd_bundle.crt')
 
 output.close()
