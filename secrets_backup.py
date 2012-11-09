@@ -3,6 +3,8 @@
 import os
 import tarfile
 
+os.umask(0177)
+
 # Produce a tarfile containing our secret keys.
 
 output = tarfile.open('secret_keys_backup.tar.gz', mode='w:gz')
