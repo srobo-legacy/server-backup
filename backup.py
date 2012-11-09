@@ -119,4 +119,10 @@ def do_secrets_backup(tar_output):
     except os.error:
       sys.stderr.write("Gerrit doesn't appear to be installed, skipping\n")
 
-print "ponies"
+# Mapping between names and the functions that implement them.
+things = { 'ldap': do_ldap_backup,
+           'mysql' : do_mysql_backup,
+           'secrets' : do_secrets_backup,
+           'ide' : do_ide_backup,
+           'git' : do_git_backup,
+         }
