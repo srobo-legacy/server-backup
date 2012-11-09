@@ -38,3 +38,5 @@ for s in list_of_dbs:
     info.size = statres.st_size
     output.addfile(tarinfo=info, fileobj=open(filename, 'r'))
     os.unlink(filename)
+
+output.close()
