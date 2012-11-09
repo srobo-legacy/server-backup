@@ -8,6 +8,9 @@ import ConfigParser
 import time
 import tempfile
 
+# A series of backup functions. They all take a tarfile object and put relevant
+# data into them.
+
 def do_git_backup(tar_output):
     print "Run `rsync -az optimus:/srv/git/ ./git/` to backup git into the 'git' dir"
 
