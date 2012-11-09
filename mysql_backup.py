@@ -2,6 +2,13 @@
 
 import ConfigParser
 import os
+import sys
+
+try :
+    os.stat("backup.ini")
+except OSError:
+    sys.stderr.write("mysql backup must have backup.ini\n")
+    sys.exit(1)
 
 config = ConfigParser.SafeConfigParser()
 config.read("backup.ini")
@@ -17,5 +24,7 @@ try:
 except os.error: 
   pass
 
+# Attempt to dump the set of databases into some files. This relies on my.cnf
+# being configured in $HOME, and a mysqldump section existing in there.
 for s in list_of_dbs:
-    os.system("mysqldump {0} -u root -p > mysql_dbs/{1}".format(s, s))
+    os.system("mysqldump {0} > mysql_dbs/{1}".format(s, s))
