@@ -18,5 +18,11 @@ def my_addfile(tarname, srcfile):
 my_addfile('www.studentrobotics.org.crt', '/etc/pki/tls/certs/www.studentrobotics.org.crt')
 my_addfile('godaddy_bundle.crt', '/etc/pki/tls/certs/gd_bundle.crt')
 my_addfile('server.key', '/etc/pki/tls/private/server.key')
+my_addfile('ssh_host_dsa_key', '/etc/ssh/ssh_host_dsa_key')
+my_addfile('ssh_host_dsa_key.pub', '/etc/ssh/ssh_host_dsa_key.pub')
+my_addfile('ssh_host_rsa_key', '/etc/ssh/ssh_host_rsa_key')
+my_addfile('ssh_host_rsa_key.pub', '/etc/ssh/ssh_host_rsa_key.pub')
+my_addfile('ssh_host_key', '/etc/ssh/ssh_host_key')
+my_addfile('ssh_host_key.pub', '/etc/ssh/ssh_host_key.pub')
 
 output.close()
