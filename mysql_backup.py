@@ -3,6 +3,8 @@
 import ConfigParser
 import os
 import sys
+import tarfile
+import tempfile
 
 os.umask(0177)
 
@@ -21,12 +23,18 @@ list_of_dbs = list_of_dbs_str.split(',')
 for s in list_of_dbs:
     s.strip()
 
-try:
-  os.makedirs('mysql_dbs', 0700)
-except os.error: 
-  pass
+output = tarfile.open('mysql_backups.tar', mode='w')
 
 # Attempt to dump the set of databases into some files. This relies on my.cnf
 # being configured in $HOME, and a mysqldump section existing in there.
 for s in list_of_dbs:
-    os.system("mysqldump {0} > mysql_dbs/{1}".format(s, s))
+    handle, filename = tempfile.mkstemp()
+    os.close(handle)
+    os.system("mysqldump {0} > {1}".format(s, filename))
+
+    # And put that into the tarfile.
+    statres = os.stat(filename)
+    info = tarfile.TarInfo(name="{0}.mysql".format(s))
+    info.size = statres.st_size
+    output.addfile(tarinfo=info, fileobj=open(filename, 'r'))
+    os.unlink(filename)
