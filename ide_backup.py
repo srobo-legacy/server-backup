@@ -16,10 +16,13 @@ output = tarfile.open('ide_repo_backup.tar', mode='w')
 # Back up user repos: we only want the _master_ copies of everything, not the
 # user checkouts of repos, which I understand are only used for staging changes
 # before being pushed back to master.
-os.chdir('/var/www/html/ide/repos/')
-list_of_dirs = glob.glob('./*/master')
+os.chdir('/var/www/html/ide/')
+list_of_dirs = glob.glob('./repos/*/master')
 
 for dir in list_of_dirs:
     output.add(dir, recursive=True)
+
+# Also back up user settings. This contains team-status data too.
+output.add('settings', recursive=True)
 
 output.close()
