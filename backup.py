@@ -7,6 +7,13 @@ from ldif import LDIFParser,LDIFWriter
 import ConfigParser
 import time
 import tempfile
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('what', help='What data to back up')
+parser.add_argument('output_file', help='Output tgz target, - for stdout')
+
+args = parser.parse_args()
 
 # A series of backup functions. They all take a tarfile object and put relevant
 # data into them.
