@@ -23,7 +23,7 @@ list_of_dbs = list_of_dbs_str.split(',')
 for s in list_of_dbs:
     s.strip()
 
-output = tarfile.open('mysql_backups.tar', mode='w')
+output = tarfile.open('mysql_backups.tar.gz', mode='w:gz')
 
 # Attempt to dump the set of databases into some files. This relies on my.cnf
 # being configured in $HOME, and a mysqldump section existing in there.
