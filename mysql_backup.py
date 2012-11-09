@@ -22,7 +22,7 @@ for s in list_of_dbs:
     s.strip()
 
 try:
-  os.makedirs('mysql_dbs', 0600)
+  os.makedirs('mysql_dbs', 0700)
 except os.error: 
   pass
 
