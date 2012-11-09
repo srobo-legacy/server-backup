@@ -18,9 +18,6 @@ args = parser.parse_args()
 # A series of backup functions. They all take a tarfile object and put relevant
 # data into them.
 
-def do_git_backup(tar_output):
-    print "Run `rsync -az optimus:/srv/git/ ./git/` to backup git into the 'git' dir"
-
 def do_ide_backup(tar_output):
     # Back up user repos: we only want the _master_ copies of everything, not
     # the user checkouts of repos, which I understand are only used for staging
@@ -129,12 +126,15 @@ def do_secrets_backup(tar_output):
     except os.error:
       sys.stderr.write("Gerrit doesn't appear to be installed, skipping\n")
 
+if args.what == 'git':
+    print "Run `rsync -az optimus:/srv/git/ ./git/` to backup git into the 'git' dir"
+    sys.exit(1)
+
 # Mapping between names and the functions that implement them.
 things = { 'ldap': do_ldap_backup,
            'mysql' : do_mysql_backup,
            'secrets' : do_secrets_backup,
            'ide' : do_ide_backup,
-           'git' : do_git_backup,
          }
 
 if not args.what in things:
