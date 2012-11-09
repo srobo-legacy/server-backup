@@ -137,6 +137,10 @@ things = { 'ldap': do_ldap_backup,
            'git' : do_git_backup,
          }
 
+if not args.what in things:
+    sys.stderr.write("{0} can't be backed up\n".format(args.what))
+    sys.exit(1)
+
 output = None
 if args.output_file == '-':
     output = tarfile.open(fileobj=sys.stdout, mode="w:gz")
