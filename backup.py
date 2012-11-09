@@ -141,10 +141,14 @@ if not args.what in things:
     sys.stderr.write("{0} can't be backed up\n".format(args.what))
     sys.exit(1)
 
+backup_func = things[args.what]
+
 output = None
 if args.output_file == '-':
     output = tarfile.open(fileobj=sys.stdout, mode="w:gz")
 else:
     output = tarfile.open(args.output_file, "w:gz")
+
+backup_func(output)
 
 output.close()
