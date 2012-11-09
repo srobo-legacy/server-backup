@@ -11,7 +11,7 @@ try:
 except os.error:
   pass
 
-output = tarfile.open('ide_repo_backup.tar', mode='w')
+output = tarfile.open('ide_repo_backup.tar.gz', mode='w:gz')
 
 # Back up user repos: we only want the _master_ copies of everything, not the
 # user checkouts of repos, which I understand are only used for staging changes
