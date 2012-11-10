@@ -42,8 +42,10 @@ def do_ldap_backup(tar_output):
     # Produce an ldif of all users and groups. All other ldap objects, such as
     # the organizational units and the Manager entity, are managed by puppet in 
     # the future.
-    os.system('ldapsearch -D cn=Manager,o=sr -y managerpw -x -h localhost "(objectClass=*)" -b ou=users,o=sr > tmp_ldap_ldif')
-    os.system('ldapsearch -D cn=Manager,o=sr -y managerpw -x -h localhost "(objectClass=*)" -b ou=groups,o=sr >> tmp_ldap_ldif')
+    handle, tmpfilename1 = tempfile.mkstemp()
+    os.close(handle)
+    os.system('ldapsearch -D cn=Manager,o=sr -y managerpw -x -h localhost "(objectClass=*)" -b ou=users,o=sr > {0}'.format(tmpfilename1))
+    os.system('ldapsearch -D cn=Manager,o=sr -y managerpw -x -h localhost "(objectClass=*)" -b ou=groups,o=sr >> {0}'.format(tmpfilename1))
 
     # Code below procured from ldif parser documentation. Is fed an ldap,
     # reformats a couple of entries to be modifications rather than additions.
@@ -68,12 +70,21 @@ def do_ldap_backup(tar_output):
           else:
             self.writer.unparse(dn,entry)
 
-    # Open the ldif generated before, dump it into ldap_backup with relevant
-    # modification.
-    parser = MyLDIF(open("tmp_ldap_ldif", 'rb'), open("ldap_backup", "wb"))
+    # Open the ldif generated before, dump it into another tmpe file with
+    # relevant modification.
+    handle, tmpfilename2 = tempfile.mkstemp()
+    os.close(handle)
+    parser = MyLDIF(open(tmpfilename1, 'rb'), open(tmpfilename2, "wb"))
     parser.parse()
 
-    os.unlink("tmp_ldap_ldif")
+    statres = os.stat(tmpfilename2)
+    info = tarfile.TarInfo(name="ldap_backup")
+    info.mtime = time.time()
+    info.size = statres.st_size
+    tar_output.addfile(tarinfo=info, fileobj=open(tmpfilename2, 'r'))
+
+    os.unlink(tmpfilename1)
+    os.unlink(tmpfilename2)
 
 def do_mysql_backup(tar_output):
     config = ConfigParser.SafeConfigParser()
