@@ -19,6 +19,12 @@ parser.add_argument('-e', help='Encrypt output. Requires gpg_keyring',
 
 args = parser.parse_args()
 
+# Read our config
+config = ConfigParser.SafeConfigParser()
+# What's the location of *this* file?
+thisdir = os.path.dirname(__file__)
+config.read("{0}/backup.ini".format(thisdir))
+
 # A series of backup functions. They all take a tarfile object and put relevant
 # data into them.
 
@@ -89,10 +95,6 @@ def do_ldap_backup(tar_output):
     os.unlink(tmpfilename2)
 
 def do_mysql_backup(tar_output):
-    config = ConfigParser.SafeConfigParser()
-    # What's the location of *this* file?
-    thisdir = os.path.dirname(__file__)
-    config.read("{0}/backup.ini".format(thisdir))
     list_of_dbs_str = config.get("mysql", "databases")
 
     # Turn ugly ugly ini string into a list of db names.
