@@ -147,6 +147,12 @@ def do_secrets_backup(tar_output):
     except os.error:
       sys.stderr.write("Gerrit doesn't appear to be installed, skipping\n")
 
+    try:
+      os.stat('/srv/secrets/common.csv')
+      my_addfile('secrets.csv', '/srv/secrets/common.csv')
+    except os.error:
+      sys.stderr.write("common.csv isn't installed, you're not using puppet?\n")
+
 # Allow people to try and backup git, and tell them how to do it properly.
 # Given the nature of git repos, rsync is the most efficient way of performing
 # this backup.
