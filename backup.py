@@ -14,7 +14,6 @@ os.umask(0177)
 
 parser = argparse.ArgumentParser()
 parser.add_argument('what', help='What data to back up')
-parser.add_argument('output_file', help='Output tgz target, - for stdout')
 parser.add_argument('-e', help='Encrypt output. Requires gpg_keyring',
                     action='store_true')
 
@@ -177,12 +176,8 @@ if not args.what in things:
 # Select the backup function.
 backup_func = things[args.what]
 
-# Work out where the ultimate output is. A file or stdout.
-finaloutput = None
-if args.output_file == '-':
-    finaloutput = sys.stdout
-else:
-    finaloutput = open(args.output_file, "wb")
+# Final output should be stdout.
+finaloutput = sys.stdout
 
 # Are we going to be pumping data through gpg?
 if args.e:
