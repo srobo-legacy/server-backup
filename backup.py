@@ -142,24 +142,29 @@ def do_secrets_backup(tar_output):
     except os.error:
       sys.stderr.write("Gerrit doesn't appear to be installed, skipping\n")
 
+# Allow people to try and backup git, and tell them how to do it properly.
+# Given the nature of git repos, rsync is the most efficient way of performing
+# this backup.
 if args.what == 'git':
     print "Run `rsync -az optimus:/srv/git/ ./git/` to backup git into the 'git' dir"
     sys.exit(1)
 
-# Mapping between names and the functions that implement them.
+# Mapping between data names and the functions that back them up.
 things = { 'ldap': do_ldap_backup,
            'mysql' : do_mysql_backup,
            'secrets' : do_secrets_backup,
            'ide' : do_ide_backup,
          }
 
+# Check that the piece of data we're backing up has a function to do it.
 if not args.what in things:
     sys.stderr.write("{0} can't be backed up\n".format(args.what))
     sys.exit(1)
 
+# Select the backup function.
 backup_func = things[args.what]
 
-# Work out where the ultimate output is:
+# Work out where the ultimate output is. A file or stdout.
 finaloutput = None
 if args.output_file == '-':
     finaloutput = sys.stdout
@@ -171,9 +176,10 @@ if args.e:
     call = subprocess.Popen(['gpg', '--batch', '--encrypt', '-r', 'backups@studentrobotics.org'], stdin=subprocess.PIPE, stdout=finaloutput)
     finaloutput = call.stdin
 
-print repr(finaloutput)
+# Create a compressed tarball.
 outputtar = tarfile.open(fileobj=finaloutput, mode="w|gz")
 
+# Actually perform the desired backup.
 backup_func(outputtar)
 
 outputtar.close()
