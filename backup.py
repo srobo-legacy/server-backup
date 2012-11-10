@@ -47,8 +47,8 @@ def do_ldap_backup(tar_output):
     # the future.
     handle, tmpfilename1 = tempfile.mkstemp()
     os.close(handle)
-    os.system('ldapsearch -D cn=Manager,o=sr -y managerpw -x -h localhost "(objectClass=*)" -b ou=users,o=sr > {0}'.format(tmpfilename1))
-    os.system('ldapsearch -D cn=Manager,o=sr -y managerpw -x -h localhost "(objectClass=*)" -b ou=groups,o=sr >> {0}'.format(tmpfilename1))
+    os.system('ldapsearch -D cn=Manager,o=sr -y /etc/ldap.secret -x -h localhost "(objectClass=*)" -b ou=users,o=sr > {0}'.format(tmpfilename1))
+    os.system('ldapsearch -D cn=Manager,o=sr -y /etc/ldap.secret -x -h localhost "(objectClass=*)" -b ou=groups,o=sr >> {0}'.format(tmpfilename1))
 
     # Code below procured from ldif parser documentation. Is fed an ldap,
     # reformats a couple of entries to be modifications rather than additions.
