@@ -91,7 +91,9 @@ def do_ldap_backup(tar_output):
 
 def do_mysql_backup(tar_output):
     config = ConfigParser.SafeConfigParser()
-    config.read("backup.ini")
+    # What's the location of *this* file?
+    thisdir = os.path.dirname(__file__)
+    config.read("{0}/backup.ini".format(thisdir))
     list_of_dbs_str = config.get("mysql", "databases")
 
     # Turn ugly ugly ini string into a list of db names.
