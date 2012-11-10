@@ -123,7 +123,8 @@ def do_secrets_backup(tar_output):
         info.size = thestat.st_size
         tar_output.addfile(tarinfo=info, fileobj=open(srcfile))
 
-    my_addfile('www.studentrobotics.org.crt', '/etc/pki/tls/certs/www.studentrobotics.org.crt')
+    my_addfile('www.studentrobotics.org.crt',
+               '/etc/pki/tls/certs/www.studentrobotics.org.crt')
     my_addfile('godaddy_bundle.crt', '/etc/pki/tls/certs/gd_bundle.crt')
     my_addfile('server.key', '/etc/pki/tls/private/server.key')
     my_addfile('ssh_host_dsa_key', '/etc/ssh/ssh_host_dsa_key')
@@ -135,10 +136,14 @@ def do_secrets_backup(tar_output):
 
     try:
         os.stat('/home/gerrit')
-        my_addfile('gerrit_ssh_host_dsa_key', '/home/gerrit/srdata/etc/ssh_host_dsa_key')
-        my_addfile('gerrit_ssh_host_dsa_key.pub', '/home/gerrit/srdata/etc/ssh_host_dsa_key.pub')
-        my_addfile('gerrit_ssh_host_rsa_key', '/home/gerrit/srdata/etc/ssh_host_rsa_key')
-        my_addfile('gerrit_ssh_host_rsa_key.pub', '/home/gerrit/srdata/etc/ssh_host_rsa_key.pub')
+        my_addfile('gerrit_ssh_host_dsa_key',
+                   '/home/gerrit/srdata/etc/ssh_host_dsa_key')
+        my_addfile('gerrit_ssh_host_dsa_key.pub',
+                   '/home/gerrit/srdata/etc/ssh_host_dsa_key.pub')
+        my_addfile('gerrit_ssh_host_rsa_key',
+                   '/home/gerrit/srdata/etc/ssh_host_rsa_key')
+        my_addfile('gerrit_ssh_host_rsa_key.pub',
+                   '/home/gerrit/srdata/etc/ssh_host_rsa_key.pub')
     except os.error:
       sys.stderr.write("Gerrit doesn't appear to be installed, skipping\n")
 
