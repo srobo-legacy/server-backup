@@ -191,7 +191,19 @@ if sys.stdout.isatty():
 
 # Are we going to be pumping data through gpg?
 if args.e:
-    call = subprocess.Popen(['gpg', '--batch', '--encrypt', '-r', 'backups@studentrobotics.org'], stdin=subprocess.PIPE, stdout=finaloutput)
+    # Form a list of people who can decrypt the backup,
+    crypt_identity_str = config.get("crypt", "cryptkey")
+
+    crypt_identities = crypt_identity_str.split(',')
+    for s in crypt_identities:
+        s.strip()
+
+    callargs = ['gpg', '--batch', '--encrypt']
+    for i in crypt_identities:
+        callargs.append('-r')
+        callargs.append(i)
+
+    call = subprocess.Popen(callargs, stdin=subprocess.PIPE, stdout=finaloutput)
     finaloutput = call.stdin
 
 # Create a compressed tarball.
