@@ -178,6 +178,9 @@ backup_func = things[args.what]
 
 # Final output should be stdout.
 finaloutput = sys.stdout
+if sys.stdout.isatty():
+    sys.stderr.write('Refusing to write a tarfile to your terminal\n')
+    sys.exit(1)
 
 # Are we going to be pumping data through gpg?
 if args.e:
