@@ -19,3 +19,11 @@ to use the identity backups@studentrobotics.org. This needs to be a public key
 installed to root's keyring and _signed_ by root as well. These steps shouldn't
 ever make their way into automated configuration, given how ludicrously
 important posession of the backup secret key is.
+
+== Room for improvement ==
+
+Right now, backing up ldap and mysql involves manipulating a number of temporary
+files so that they can be put in the tarball. This appears to be due to a
+limitation of the tar format, in that I can't stream data into one, as it
+requires the size of file in advance. Using a different file format that allows
+this would be better, even if it meant stooping as low as zips.
