@@ -8,12 +8,15 @@ import ConfigParser
 import time
 import tempfile
 import argparse
+import subprocess
 
 os.umask(0177)
 
 parser = argparse.ArgumentParser()
 parser.add_argument('what', help='What data to back up')
 parser.add_argument('output_file', help='Output tgz target, - for stdout')
+parser.add_argument('-e', help='Encrypt output. Requires gpg_keyring',
+                    action='store_true')
 
 args = parser.parse_args()
 
@@ -156,12 +159,21 @@ if not args.what in things:
 
 backup_func = things[args.what]
 
-output = None
+# Work out where the ultimate output is:
+finaloutput = None
 if args.output_file == '-':
-    output = tarfile.open(fileobj=sys.stdout, mode="w:gz")
+    finaloutput = sys.stdout
 else:
-    output = tarfile.open(args.output_file, "w:gz")
+    finaloutput = open(args.output_file, "wb")
 
-backup_func(output)
+# Are we going to be pumping data through gpg?
+if args.e:
+    call = subprocess.Popen(['gpg', '--batch', '--encrypt', '-r', 'backups@studentrobotics.org'], stdin=subprocess.PIPE, stdout=finaloutput)
+    finaloutput = call.stdin
 
-output.close()
+print repr(finaloutput)
+outputtar = tarfile.open(fileobj=finaloutput, mode="w|gz")
+
+backup_func(outputtar)
+
+outputtar.close()
