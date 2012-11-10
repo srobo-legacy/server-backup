@@ -154,6 +154,10 @@ def do_secrets_backup(tar_output):
     except os.error:
       sys.stderr.write("common.csv isn't installed, you're not using puppet?\n")
 
+def do_trac_backup(tar_output):
+    os.chdir('/srv/trac')
+    tar_output.add('sr', recursive=True)
+
 # Allow people to try and backup git, and tell them how to do it properly.
 # Given the nature of git repos, rsync is the most efficient way of performing
 # this backup.
@@ -166,6 +170,7 @@ things = { 'ldap': do_ldap_backup,
            'mysql' : do_mysql_backup,
            'secrets' : do_secrets_backup,
            'ide' : do_ide_backup,
+           'trac' : do_trac_backup,
          }
 
 # Check that the piece of data we're backing up has a function to do it.
