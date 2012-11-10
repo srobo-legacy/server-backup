@@ -32,7 +32,8 @@ def do_ide_backup(tar_output):
     # Back up user repos: we only want the _master_ copies of everything, not
     # the user checkouts of repos, which I understand are only used for staging
     # changes before being pushed back to master.
-    os.chdir('/var/www/html/ide/')
+    ide_location = config.get('ide', 'location')
+    os.chdir(ide_location)
     list_of_dirs = glob.glob('./repos/*/master')
 
     for dir in list_of_dirs:
