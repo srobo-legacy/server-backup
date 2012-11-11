@@ -140,8 +140,13 @@ def do_secrets_backup(tar_output):
         info.size = thestat.st_size
         tar_output.addfile(tarinfo=info, fileobj=open(srcfile))
 
-    my_addfile('www.studentrobotics.org.crt',
-               '/etc/pki/tls/certs/www.studentrobotics.org.crt')
+    if os.path.exists('/etc/pki/tls/certs/www.studentrobotics.org.crt'):
+       my_addfile('https/server.crt',
+                  '/etc/pki/tls/certs/www.studentrobotics.org.crt')
+    else:
+       my_addfile('https/server.crt',
+                  '/etc/pki/tls/certs/server.crt')
+
     my_addfile('godaddy_bundle.crt', '/etc/pki/tls/certs/gd_bundle.crt')
     my_addfile('server.key', '/etc/pki/tls/private/server.key')
     my_addfile('login/ssh_host_dsa_key', '/etc/ssh/ssh_host_dsa_key')
