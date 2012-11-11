@@ -48,12 +48,12 @@ def do_ide_backup(tar_output):
         tar_output.add(dir, arcname=arcname, recursive=True)
 
     # Also back up user settings. This contains team-status data too.
-    tar_output.add('settings', recursive=True)
+    tar_output.add('settings', arcname='ide/settings', recursive=True)
 
     # Also the notifications directory: I've no idea what this really is, but
     # it's not large.
 
-    tar_output.add('notifications', recursive=True)
+    tar_output.add('notifications', arcname='ide/notifications', recursive=True)
 
 def do_ldap_backup(tar_output):
     # Produce an ldif of all users and groups. All other ldap objects, such as
