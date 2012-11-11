@@ -186,7 +186,7 @@ def do_secrets_backup(tar_output):
 
 def do_trac_backup(tar_output):
     os.chdir('/srv/trac')
-    tar_output.add('.', arcfile='trac', recursive=True)
+    tar_output.add('.', arcname='trac', recursive=True)
 
 def do_gerrit_backup(tar_output):
     # Only backup all-projects, which counts as config. Everything else is in
