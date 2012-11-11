@@ -214,7 +214,8 @@ if args.what == 'git':
 
 # Check that the piece of data we're backing up has a function to do it.
 if not args.what in things:
-    sys.stderr.write("{0} can't be backed up\n".format(args.what))
+    sys.stderr.write("No backup definition for {0}.\n".format(args.what))
+    parser.parse_args(['-h'])   # Hack to show the help.
     sys.exit(1)
 
 # Select the backup function.
