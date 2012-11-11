@@ -21,8 +21,17 @@ args = parser.parse_args()
 
 # Read our config
 config = ConfigParser.SafeConfigParser()
+
 # What's the location of *this* file?
 thisdir = os.path.dirname(__file__)
+backupfile = '{0}/backup.ini'.format(thisdir)
+
+try:
+    os.stat(backupfile)
+except os.error:
+    sys.stderr.write('No backup config file at {0}'.format(backupfile))
+    sys.exit(1)
+
 config.read("{0}/backup.ini".format(thisdir))
 
 # A series of backup functions. They all take a tarfile object and put relevant
