@@ -170,6 +170,12 @@ def do_trac_backup(tar_output):
     os.chdir('/srv/trac')
     tar_output.add('sr', recursive=True)
 
+def do_gerrit_backup(tar_output):
+    # Only backup all-projects, which counts as config. Everything else is in
+    # mysql.
+    os.chdir('/home/gerrit/srdata/git/')
+    tar_output.add('All-Projects.git', recursive=True)
+
 # Allow people to try and backup git, and tell them how to do it properly.
 # Given the nature of git repos, rsync is the most efficient way of performing
 # this backup.
@@ -183,6 +189,7 @@ things = { 'ldap': do_ldap_backup,
            'secrets' : do_secrets_backup,
            'ide' : do_ide_backup,
            'trac' : do_trac_backup,
+           'gerrit' : do_gerrit_backup,
          }
 
 # Check that the piece of data we're backing up has a function to do it.
