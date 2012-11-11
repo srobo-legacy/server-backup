@@ -168,7 +168,7 @@ def do_secrets_backup(tar_output):
 
     try:
       os.stat('/srv/secrets/common.csv')
-      my_addfile('secrets.csv', '/srv/secrets/common.csv')
+      my_addfile('common.csv', '/srv/secrets/common.csv')
     except os.error:
       sys.stderr.write("common.csv isn't installed, you're not using puppet?\n")
 
