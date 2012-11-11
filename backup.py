@@ -83,9 +83,11 @@ def do_ldap_backup(tar_output):
 
        # Encode special dn-specific backup logic here.
        def handle(self,dn,entry):
-          if dn == "cn=shell-users,ou=groups,o=sr":
+          if dn in make_modify:
             ponies = entry['memberUid']
             self.writer.unparse(dn,[(ldap.MOD_REPLACE, 'memberUid', ponies)])
+            return
+          elif dn in remove:
             return
           elif dn == None:
             return
