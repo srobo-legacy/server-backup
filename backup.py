@@ -82,17 +82,17 @@ def do_ldap_backup(tar_output):
             self.writer = LDIFWriter(output)
 
        # Encode special dn-specific backup logic here.
-       def handle(self,dn,entry):
-           if dn in make_modify:
-               ponies = entry['memberUid']
+        def handle(self,dn,entry):
+            if dn in make_modify:
+                ponies = entry['memberUid']
                 self.writer.unparse(dn,[(ldap.MOD_REPLACE, 'memberUid', ponies)])
                 return
-           elif dn in remove:
-               return
-           elif dn == None:
-               return
-           else:
-               self.writer.unparse(dn,entry)
+            elif dn in remove:
+                return
+            elif dn == None:
+                return
+            else:
+                self.writer.unparse(dn,entry)
 
     # Open the ldif generated before, dump it into another tmpe file with
     # relevant modification.
