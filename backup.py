@@ -26,9 +26,7 @@ config = ConfigParser.SafeConfigParser()
 thisdir = os.path.dirname(__file__)
 backupfile = '{0}/backup.ini'.format(thisdir)
 
-try:
-    os.stat(backupfile)
-except os.error:
+if not os.path.exists(backupfile)
     sys.stderr.write('No backup config file at {0}'.format(backupfile))
     sys.exit(1)
 
@@ -153,7 +151,7 @@ def do_secrets_backup(tar_output):
     my_addfile('login/ssh_host_key', '/etc/ssh/ssh_host_key')
     my_addfile('login/ssh_host_key.pub', '/etc/ssh/ssh_host_key.pub')
 
-    try:
+    if os.path.exist('/home/gerrit'):
         os.stat('/home/gerrit')
         my_addfile('gerrit_ssh_host_dsa_key',
                    '/home/gerrit/srdata/etc/ssh_host_dsa_key')
@@ -163,19 +161,17 @@ def do_secrets_backup(tar_output):
                    '/home/gerrit/srdata/etc/ssh_host_rsa_key')
         my_addfile('gerrit_ssh_host_rsa_key.pub',
                    '/home/gerrit/srdata/etc/ssh_host_rsa_key.pub')
-    except os.error:
+    else:
       sys.stderr.write("Gerrit doesn't appear to be installed, skipping\n")
 
-    try:
-      os.stat('/srv/secrets/common.csv')
+    if os.path.exists('/srv/secrets/common.csv'):
       my_addfile('common.csv', '/srv/secrets/common.csv')
-    except os.error:
+    else:
       sys.stderr.write("common.csv isn't installed, you're not using puppet?\n")
 
-    try:
-      os.stat('/home/backup/.ssh/authorized_keys')
+    if os.path.exists('/home/backup/.ssh/authorized_keys'):
       my_addfile('login/backups_ssh_keys', '/home/backup/.ssh/authorized_keys')
-    except os.error:
+    else:
       sys.stderr.write("No backup ssh keys, assuming not using puppet yet\n")
 
 def do_trac_backup(tar_output):
