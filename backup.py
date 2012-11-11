@@ -146,12 +146,12 @@ def do_secrets_backup(tar_output):
                '/etc/pki/tls/certs/www.studentrobotics.org.crt')
     my_addfile('godaddy_bundle.crt', '/etc/pki/tls/certs/gd_bundle.crt')
     my_addfile('server.key', '/etc/pki/tls/private/server.key')
-    my_addfile('ssh_host_dsa_key', '/etc/ssh/ssh_host_dsa_key')
-    my_addfile('ssh_host_dsa_key.pub', '/etc/ssh/ssh_host_dsa_key.pub')
-    my_addfile('ssh_host_rsa_key', '/etc/ssh/ssh_host_rsa_key')
-    my_addfile('ssh_host_rsa_key.pub', '/etc/ssh/ssh_host_rsa_key.pub')
-    my_addfile('ssh_host_key', '/etc/ssh/ssh_host_key')
-    my_addfile('ssh_host_key.pub', '/etc/ssh/ssh_host_key.pub')
+    my_addfile('login/ssh_host_dsa_key', '/etc/ssh/ssh_host_dsa_key')
+    my_addfile('login/ssh_host_dsa_key.pub', '/etc/ssh/ssh_host_dsa_key.pub')
+    my_addfile('login/ssh_host_rsa_key', '/etc/ssh/ssh_host_rsa_key')
+    my_addfile('login/ssh_host_rsa_key.pub', '/etc/ssh/ssh_host_rsa_key.pub')
+    my_addfile('login/ssh_host_key', '/etc/ssh/ssh_host_key')
+    my_addfile('login/ssh_host_key.pub', '/etc/ssh/ssh_host_key.pub')
 
     try:
         os.stat('/home/gerrit')
@@ -174,7 +174,7 @@ def do_secrets_backup(tar_output):
 
     try:
       os.stat('/home/backup/.ssh/authorized_keys')
-      my_addfile('backups_ssh_keys', '/home/backup/.ssh/authorized_keys')
+      my_addfile('login/backups_ssh_keys', '/home/backup/.ssh/authorized_keys')
     except os.error:
       sys.stderr.write("No backup ssh keys, assuming not using puppet yet\n")
 
