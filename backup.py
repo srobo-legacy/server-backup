@@ -71,6 +71,10 @@ def do_ldap_backup(tar_output):
     # backed up and restored. Without this, adding groups like shell-users
     # during backup restore would be an error.
 
+    make_modify = ["cn=shell-users,ou=groups,o=sr", "cn=mentors,ou=groups,o=sr",
+		   "cn=srusers,ou=groups,o=sr"]
+    remove = ["uid=ide,ou=users,o=sr", "uid=anon,ou=users,o=sr"]
+
     # This class hooks into processing an ldif
     class MyLDIF(LDIFParser):
        def __init__(self,input,output):
