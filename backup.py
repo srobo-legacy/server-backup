@@ -12,13 +12,6 @@ import subprocess
 
 os.umask(0177)
 
-parser = argparse.ArgumentParser()
-parser.add_argument('what', help='What data to back up')
-parser.add_argument('-e', help='Encrypt output. Requires gpg_keyring',
-                    action='store_true')
-
-args = parser.parse_args()
-
 # Read our config
 config = ConfigParser.SafeConfigParser()
 
@@ -195,13 +188,6 @@ def do_gerrit_backup(tar_output):
     os.chdir('/home/gerrit/srdata/git/')
     tar_output.add('All-Projects.git', recursive=True)
 
-# Allow people to try and backup git, and tell them how to do it properly.
-# Given the nature of git repos, rsync is the most efficient way of performing
-# this backup.
-if args.what == 'git':
-    print "Run `rsync -az optimus:/srv/git/ ./git/` to backup git into the 'git' dir"
-    sys.exit(1)
-
 # Mapping between data names and the functions that back them up.
 things = { 'ldap': do_ldap_backup,
            'mysql' : do_mysql_backup,
@@ -210,6 +196,21 @@ things = { 'ldap': do_ldap_backup,
            'trac' : do_trac_backup,
            'gerrit' : do_gerrit_backup,
          }
+
+what_values = ', '.join(things.keys())
+parser = argparse.ArgumentParser()
+parser.add_argument('what', help='What data to back up. One of: ' + what_values)
+parser.add_argument('-e', help='Encrypt output. Requires gpg_keyring',
+		                    action='store_true')
+
+args = parser.parse_args()
+
+# Allow people to try and backup git, and tell them how to do it properly.
+# Given the nature of git repos, rsync is the most efficient way of performing
+# this backup.
+if args.what == 'git':
+    print "Run `rsync -az optimus:/srv/git/ ./git/` to backup git into the 'git' dir"
+    sys.exit(1)
 
 # Check that the piece of data we're backing up has a function to do it.
 if not args.what in things:
