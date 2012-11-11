@@ -172,6 +172,12 @@ def do_secrets_backup(tar_output):
     except os.error:
       sys.stderr.write("common.csv isn't installed, you're not using puppet?\n")
 
+    try:
+      os.stat('/home/backup/.ssh/authorized_keys')
+      my_addfile('backups_ssh_keys', '/home/backup/.ssh/authorized_keys')
+    except os.error:
+      sys.stderr.write("No backup ssh keys, assuming not using puppet yet\n")
+
 def do_trac_backup(tar_output):
     os.chdir('/srv/trac')
     tar_output.add('sr', recursive=True)
