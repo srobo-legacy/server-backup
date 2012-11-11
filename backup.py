@@ -158,7 +158,7 @@ def do_secrets_backup(tar_output):
     my_addfile('login/ssh_host_key', '/etc/ssh/ssh_host_key')
     my_addfile('login/ssh_host_key.pub', '/etc/ssh/ssh_host_key.pub')
 
-    if os.path.exist('/home/gerrit'):
+    if os.path.exists('/home/gerrit'):
         os.stat('/home/gerrit')
         my_addfile('gerrit_ssh_host_dsa_key',
                    '/home/gerrit/srdata/etc/ssh_host_dsa_key')
