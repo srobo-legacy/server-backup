@@ -26,7 +26,7 @@ config = ConfigParser.SafeConfigParser()
 thisdir = os.path.dirname(__file__)
 backupfile = '{0}/backup.ini'.format(thisdir)
 
-if not os.path.exists(backupfile)
+if not os.path.exists(backupfile):
     sys.stderr.write('No backup config file at {0}'.format(backupfile))
     sys.exit(1)
 
