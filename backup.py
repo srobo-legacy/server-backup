@@ -150,7 +150,7 @@ def do_secrets_backup(tar_output):
     if os.path.exists('/etc/pki/tls/certs/gd_bundle.crt')
         my_addfile('https/gd_bundle.crt', '/etc/pki/tls/certs/gd_bundle.crt')
 
-    my_addfile('server.key', '/etc/pki/tls/private/server.key')
+    my_addfile('https/server.key', '/etc/pki/tls/private/server.key')
     my_addfile('login/ssh_host_dsa_key', '/etc/ssh/ssh_host_dsa_key')
     my_addfile('login/ssh_host_dsa_key.pub', '/etc/ssh/ssh_host_dsa_key.pub')
     my_addfile('login/ssh_host_rsa_key', '/etc/ssh/ssh_host_rsa_key')
