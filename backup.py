@@ -44,7 +44,8 @@ def do_ide_backup(tar_output):
     list_of_dirs = glob.glob('./repos/*/master')
 
     for dir in list_of_dirs:
-        tar_output.add(dir, recursive=True)
+        arcname = '/ide' + dir[1:]
+        tar_output.add(dir, arcname=arcname, recursive=True)
 
     # Also back up user settings. This contains team-status data too.
     tar_output.add('settings', recursive=True)
