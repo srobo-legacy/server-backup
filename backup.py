@@ -117,6 +117,7 @@ def do_ldap_backup(tar_output):
     return result
 
 def do_mysql_backup(tar_output):
+    result = 0
     list_of_dbs_str = config.get("mysql", "databases")
 
     # Turn ugly ugly ini string into a list of db names.
@@ -130,7 +131,11 @@ def do_mysql_backup(tar_output):
     for s in list_of_dbs:
         handle, filename = tempfile.mkstemp()
         os.close(handle)
-        os.system("mysqldump {0} > {1}".format(s, filename))
+        ret = os.system("mysqldump {0} > {1}".format(s, filename))
+        if not os.WIFEXITED(ret) or os.WEXITSTATUS(ret) != 0:
+            sys.stderr.write('Couldn\'t dump database {0}\n'.format(s))
+            result = 1
+            continue
 
         # And put that into the tarfile.
         statres = os.stat(filename)
@@ -139,6 +144,8 @@ def do_mysql_backup(tar_output):
         info.size = statres.st_size
         tar_output.addfile(tarinfo=info, fileobj=open(filename, 'r'))
         os.unlink(filename)
+
+    return result
 
 def do_secrets_backup(tar_output):
     def my_addfile(tarname, srcfile):
