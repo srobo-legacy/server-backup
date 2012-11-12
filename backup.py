@@ -140,7 +140,7 @@ def do_mysql_backup(tar_output):
 
         # And put that into the tarfile.
         statres = os.stat(filename)
-        info = tarfile.TarInfo(name="{0}.mysql".format(s))
+        info = tarfile.TarInfo(name="mysql/{0}.db".format(s))
         info.mtime = time.time()
         info.size = statres.st_size
         tar_output.addfile(tarinfo=info, fileobj=open(filename, 'r'))
