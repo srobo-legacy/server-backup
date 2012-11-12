@@ -304,4 +304,4 @@ outputtar.close()
 
 if result != 0:
     sys.stderr.write('Errors in backup\n')
-os.exit(result)
+sys.exit(result)
