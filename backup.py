@@ -196,7 +196,7 @@ def do_svn_backup(tar_output):
                                  stderr=open('/dev/null', 'w'))
     gzipcall = subprocess.Popen(['gzip'], stdin=admincall.stdout, stdout=handle)
     gzipcall.wait()
-    close(handle)
+    os.close(handle)
     tar_output.add(filename, arcname='svn/db.tgz')
 
 # Mapping between data names and the functions that back them up.
