@@ -198,6 +198,7 @@ def do_svn_backup(tar_output):
     gzipcall.wait()
     os.close(handle)
     tar_output.add(filename, arcname='svn/db.tgz')
+    os.unlink(filename)
 
 # Mapping between data names and the functions that back them up.
 things = { 'ldap': do_ldap_backup,
