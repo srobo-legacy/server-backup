@@ -185,6 +185,9 @@ def do_trac_backup(tar_output):
 def do_gerrit_backup(tar_output):
     # Only backup all-projects, which counts as config. Everything else is in
     # mysql.
+    if not os.path.exists('/home/gerrit/'):
+        sys.stderr.write('Gerrit not installed; not backing it up\n')
+        return
     os.chdir('/home/gerrit/srdata/git/')
     tar_output.add('All-Projects.git', recursive=True)
 
