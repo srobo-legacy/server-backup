@@ -107,8 +107,8 @@ def do_ldap_backup(tar_output):
     outfile = open(tmpfilename2, 'wb')
     parser = MyLDIF(infile, outfile)
     parser.parse()
-    os.close(infile)
-    os.close(outfile)
+    infile.close()
+    outfile.close()
 
     statres = os.stat(tmpfilename2)
     info = tarfile.TarInfo(name="ldap/ldap_backup")
