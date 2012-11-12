@@ -210,15 +210,20 @@ def do_gerrit_backup(tar_output):
 
 def do_svn_backup(tar_output):
     # Run svnadmin dump through gzip and use that for the backup.
+    result = 0
     handle, filename = tempfile.mkstemp()
     admincall = subprocess.Popen(['svnadmin', 'dump', '/srv/svn/sr', '--deltas'],
                                  stdout=subprocess.PIPE,
                                  stderr=open('/dev/null', 'w'))
     gzipcall = subprocess.Popen(['gzip'], stdin=admincall.stdout, stdout=handle)
     gzipcall.wait()
+    if admincall.returncode != 0 or gzipall.returncode != 0:
+        sys.stderr.write('SVN dump failed\n')
+        result = 0
     os.close(handle)
     tar_output.add(filename, arcname='svn/db.gz')
     os.unlink(filename)
+    return result
 
 def do_all_backup(tar_output):
     for i in things.keys():
