@@ -231,9 +231,6 @@ if not args.what in things:
     parser.parse_args(['-h'])   # Hack to show the help.
     sys.exit(1)
 
-# Select the backup function.
-backup_func = things[args.what]
-
 # Final output should be stdout.
 finaloutput = sys.stdout
 if sys.stdout.isatty():
@@ -259,6 +256,9 @@ if args.e:
 
 # Create a compressed tarball.
 outputtar = tarfile.open(fileobj=finaloutput, mode="w|gz")
+
+# Select the backup function.
+backup_func = things[args.what]
 
 # Actually perform the desired backup.
 backup_func(outputtar)
