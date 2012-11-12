@@ -223,7 +223,7 @@ def do_svn_backup(tar_output):
     gzipcall = subprocess.Popen(['gzip'], stdin=admincall.stdout, stdout=handle)
     admincall.wait()
     gzipcall.wait()
-    if admincall.returncode != 0 or gzipall.returncode != 0:
+    if admincall.returncode != 0 or gzipcall.returncode != 0:
         sys.stderr.write('SVN dump failed\n')
         result = 1
     os.close(handle)
