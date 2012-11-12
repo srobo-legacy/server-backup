@@ -188,6 +188,16 @@ def do_gerrit_backup(tar_output):
     os.chdir('/home/gerrit/srdata/git/')
     tar_output.add('All-Projects.git', recursive=True)
 
+def do_svn_backup(tar_output):
+    # Run svnadmin dump through gzip and use that for the backup.
+    handle, filename = tempfile.mkstemp()
+    admincall = subprocess.Popen(['svnadmin', 'dump', '/srv/svn/sr', '--deltas'],
+                                 stdout=subprocess.PIPE)
+    gzipcall = subprocess.Popen(['gzip'], stdin=admincall.stdout, stdout=handle)
+    gzipcall.wait()
+    close(handle)
+    tar_output.add(filename, arcname='svn/db.tgz')
+
 # Mapping between data names and the functions that back them up.
 things = { 'ldap': do_ldap_backup,
            'mysql' : do_mysql_backup,
@@ -195,6 +205,7 @@ things = { 'ldap': do_ldap_backup,
            'ide' : do_ide_backup,
            'trac' : do_trac_backup,
            'gerrit' : do_gerrit_backup,
+           'svn' : do_svn_backup,
          }
 
 what_values = ', '.join(things.keys())
