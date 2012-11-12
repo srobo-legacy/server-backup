@@ -192,7 +192,7 @@ def do_svn_backup(tar_output):
     # Run svnadmin dump through gzip and use that for the backup.
     handle, filename = tempfile.mkstemp()
     admincall = subprocess.Popen(['svnadmin', 'dump', '/srv/svn/sr', '--deltas'],
-                                 stdout=subprocess.PIPE)
+                                 stdout=subprocess.PIPE, stderr=None)
     gzipcall = subprocess.Popen(['gzip'], stdin=admincall.stdout, stdout=handle)
     gzipcall.wait()
     close(handle)
