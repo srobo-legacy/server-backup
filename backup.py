@@ -203,6 +203,11 @@ def do_svn_backup(tar_output):
     tar_output.add(filename, arcname='svn/db.gz')
     os.unlink(filename)
 
+def do_all_backup(tar_output):
+    for i in things.keys():
+        if i != 'all':
+            things[i](tar_output)
+
 # Mapping between data names and the functions that back them up.
 things = { 'ldap': do_ldap_backup,
            'mysql' : do_mysql_backup,
@@ -211,6 +216,7 @@ things = { 'ldap': do_ldap_backup,
            'trac' : do_trac_backup,
            'gerrit' : do_gerrit_backup,
            'svn' : do_svn_backup,
+           'all' : do_all_backup,
          }
 
 what_values = ', '.join(things.keys())
