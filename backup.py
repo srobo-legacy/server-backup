@@ -226,9 +226,14 @@ def do_svn_backup(tar_output):
     return result
 
 def do_all_backup(tar_output):
+    result = 0
     for i in things.keys():
         if i != 'all':
-            things[i](tar_output)
+            newresult = things[i](tar_output)
+            if newresult != 0:
+                result = 1
+
+    return result
 
 # Mapping between data names and the functions that back them up.
 things = { 'ldap': do_ldap_backup,
