@@ -107,7 +107,7 @@ def do_ldap_backup(tar_output):
     parser.parse()
 
     statres = os.stat(tmpfilename2)
-    info = tarfile.TarInfo(name="ldap_backup")
+    info = tarfile.TarInfo(name="ldap/ldap_backup")
     info.mtime = time.time()
     info.size = statres.st_size
     tar_output.addfile(tarinfo=info, fileobj=open(tmpfilename2, 'r'))
