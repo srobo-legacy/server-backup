@@ -220,7 +220,7 @@ def do_svn_backup(tar_output):
     gzipcall.wait()
     if admincall.returncode != 0 or gzipall.returncode != 0:
         sys.stderr.write('SVN dump failed\n')
-        result = 0
+        result = 1
     os.close(handle)
     tar_output.add(filename, arcname='svn/db.gz')
     os.unlink(filename)
