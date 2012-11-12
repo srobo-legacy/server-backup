@@ -297,6 +297,10 @@ outputtar = tarfile.open(fileobj=finaloutput, mode="w|gz")
 backup_func = things[args.what]
 
 # Actually perform the desired backup.
-backup_func(outputtar)
+result = backup_func(outputtar)
 
 outputtar.close()
+
+if result != 0:
+    sys.stderr.write('Errors in backup\n')
+os.exit(result)
