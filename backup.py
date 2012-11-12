@@ -135,6 +135,7 @@ def do_mysql_backup(tar_output):
         if not os.WIFEXITED(ret) or os.WEXITSTATUS(ret) != 0:
             sys.stderr.write('Couldn\'t dump database {0}\n'.format(s))
             result = 1
+            os.unlink(filename)
             continue
 
         # And put that into the tarfile.
