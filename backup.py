@@ -249,29 +249,62 @@ things = { 'ldap': do_ldap_backup,
            'trac' : do_trac_backup,
            'gerrit' : do_gerrit_backup,
            'svn' : do_svn_backup,
-           'all' : do_all_backup,
          }
 
 what_values = ', '.join(things.keys())
 parser = argparse.ArgumentParser()
-parser.add_argument('what', help='What data to back up. One of: ' + what_values)
+parser.add_argument('what', help='What data to back up. One of: ' + what_values,
+                    nargs = "*")
 parser.add_argument('-e', help='Encrypt output. Requires gpg_keyring',
 		                    action='store_true')
 
 args = parser.parse_args()
 
-# Allow people to try and backup git, and tell them how to do it properly.
-# Given the nature of git repos, rsync is the most efficient way of performing
-# this backup.
-if args.what == 'git':
-    print "Run `rsync -az optimus:/srv/git/ ./git/` to backup git into the 'git' dir"
-    sys.exit(1)
+sources = set()
 
-# Check that the piece of data we're backing up has a function to do it.
-if not args.what in things:
-    sys.stderr.write("No backup definition for {0}.\n".format(args.what))
-    parser.parse_args(['-h'])   # Hack to show the help.
-    sys.exit(1)
+for desc in args.what:
+
+    if desc[0] == "-":
+        "'-' prefix means exclude this thing"
+        name = desc[1:]
+        exclude = True
+    else:
+        name = desc
+        exclude = False
+
+    if name == "git":
+        # Allow people to try and backup git, and tell them how to do it properly.
+        # Given the nature of git repos, rsync is the most efficient way of performing
+        # this backup.
+        print "Run `rsync -az optimus:/srv/git/ ./git/` to backup git into the 'git' dir"
+        sys.exit(1)
+
+    if name == "all":
+        "All the things"
+        if exclude:
+            print >>sys.stderr, "Excluding all is not supported -- aborting."
+            exit(1)
+
+        for v in things.keys():
+            sources.add(v)
+
+    else:
+        if name not in things:
+            "That thing has no backup function"
+            print >>sys.stderr, "No backup definition for", name
+            parser.parse_args(['-h'])   # Hack to show the help.
+            sys.exit(1)
+
+        if exclude:
+            try:
+                sources.remove( name )
+            except KeyError:
+                print >>sys.stderr, "Cannot exclude '{0}' as it is not already included.".format(name)
+                exit(1)
+        else:
+            sources.add( name )
+
+print >>sys.stderr, "Backing up", ", ".join( sources )
 
 # Final output should be stdout.
 finaloutput = sys.stdout
@@ -299,11 +332,18 @@ if args.e:
 # Create a compressed tarball.
 outputtar = tarfile.open(fileobj=finaloutput, mode="w|gz")
 
-# Select the backup function.
-backup_func = things[args.what]
+result = 0
 
-# Actually perform the desired backup.
-result = backup_func(outputtar)
+for source in sources:
+
+    # Select the backup function.
+    backup_func = things[source]
+
+    # Actually perform the desired backup.
+    newresult = backup_func(outputtar)
+
+    if newresult != 0:
+        result = 1
 
 outputtar.close()
 
