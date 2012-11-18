@@ -343,6 +343,7 @@ for source in sources:
     newresult = backup_func(outputtar)
 
     if newresult != 0:
+        print >>sys.stderr, "Failed to backup {0} (exit code {1})".format( source, newresult )
         result = 1
 
 outputtar.close()
