@@ -188,17 +188,17 @@ def do_secrets_backup(tar_output):
         my_addfile('gerrit/gerrit_ssh_host_rsa_key.pub',
                    '/home/gerrit/srdata/etc/ssh_host_rsa_key.pub')
     else:
-      sys.stderr.write("Gerrit doesn't appear to be installed, skipping\n")
+        sys.stderr.write("Gerrit doesn't appear to be installed, skipping\n")
 
     if os.path.exists('/srv/secrets/common.csv'):
-      my_addfile('common.csv', '/srv/secrets/common.csv')
+        my_addfile('common.csv', '/srv/secrets/common.csv')
     else:
-      sys.stderr.write("common.csv isn't installed, you're not using puppet?\n")
+        sys.stderr.write("common.csv isn't installed, you're not using puppet?\n")
 
     if os.path.exists('/home/backup/.ssh/authorized_keys'):
-      my_addfile('login/backups_ssh_keys', '/home/backup/.ssh/authorized_keys')
+        my_addfile('login/backups_ssh_keys', '/home/backup/.ssh/authorized_keys')
     else:
-      sys.stderr.write("No backup ssh keys, assuming not using puppet yet\n")
+        sys.stderr.write("No backup ssh keys, assuming not using puppet yet\n")
 
 def do_trac_backup(tar_output):
     os.chdir('/srv/trac')
