@@ -20,7 +20,7 @@ thisdir = os.path.dirname(__file__)
 backupfile = '{0}/backup.ini'.format(thisdir)
 
 if not os.path.exists(backupfile):
-    sys.stderr.write('No backup config file at {0}'.format(backupfile))
+    print >>sys.stderr, "No backup config file at {0}".format(backupfile)
     sys.exit(1)
 
 config.read("{0}/backup.ini".format(thisdir))
@@ -58,12 +58,12 @@ def do_ldap_backup(tar_output):
     os.close(handle)
     ret = os.system('ldapsearch -z 0 -D cn=Manager,o=sr -y /etc/ldap.secret -x -h localhost "(objectClass=*)" -b ou=users,o=sr > {0}'.format(tmpfilename1))
     if not os.WIFEXITED(ret) or os.WEXITSTATUS(ret) != 0:
-        sys.stderr.write('Couldn\'t backup ldap users\n')
+        print >>sys.stderr, "Couldn't backup ldap users"
         result = 1
 
     ret = os.system('ldapsearch -z 0 -D cn=Manager,o=sr -y /etc/ldap.secret -x -h localhost "(objectClass=*)" -b ou=groups,o=sr >> {0}'.format(tmpfilename1))
     if not os.WIFEXITED(ret) or os.WEXITSTATUS(ret) != 0:
-        sys.stderr.write('Couldn\'t backup ldap groups\n')
+        print >>sys.stderr, "Couldn't backup ldap groups"
         result = 1
 
     # Code below procured from ldif parser documentation. Is fed an ldap,
@@ -137,7 +137,7 @@ def do_mysql_backup(tar_output):
         os.close(handle)
         ret = os.system("mysqldump {0} > {1}".format(s, filename))
         if not os.WIFEXITED(ret) or os.WEXITSTATUS(ret) != 0:
-            sys.stderr.write('Couldn\'t dump database {0}\n'.format(s))
+            print >>sys.stderr, "Couldn't dump database {0}".format(s)
             result = 1
             os.unlink(filename)
             continue
@@ -188,17 +188,17 @@ def do_secrets_backup(tar_output):
         my_addfile('gerrit/gerrit_ssh_host_rsa_key.pub',
                    '/home/gerrit/srdata/etc/ssh_host_rsa_key.pub')
     else:
-        sys.stderr.write("Gerrit doesn't appear to be installed, skipping\n")
+        print >>sys.stderr, "Gerrit doesn't appear to be installed, skipping"
 
     if os.path.exists('/srv/secrets/common.csv'):
         my_addfile('common.csv', '/srv/secrets/common.csv')
     else:
-        sys.stderr.write("common.csv isn't installed, you're not using puppet?\n")
+        print >>sys.stderr, "common.csv isn't installed, you're not using puppet?"
 
     if os.path.exists('/home/backup/.ssh/authorized_keys'):
         my_addfile('login/backups_ssh_keys', '/home/backup/.ssh/authorized_keys')
     else:
-        sys.stderr.write("No backup ssh keys, assuming not using puppet yet\n")
+        print >>sys.stderr, "No backup ssh keys, assuming not using puppet yet"
 
 def do_trac_backup(tar_output):
     os.chdir('/srv/trac')
@@ -208,7 +208,7 @@ def do_gerrit_backup(tar_output):
     # Only backup all-projects, which counts as config. Everything else is in
     # mysql.
     if not os.path.exists('/home/gerrit/'):
-        sys.stderr.write('Gerrit not installed; not backing it up\n')
+        print >>sys.stderr, "Gerrit not installed; not backing it up"
         return
     os.chdir('/home/gerrit/srdata/git/')
     tar_output.add('All-Projects.git', recursive=True)
@@ -224,7 +224,7 @@ def do_svn_backup(tar_output):
     admincall.wait()
     gzipcall.wait()
     if admincall.returncode != 0 or gzipcall.returncode != 0:
-        sys.stderr.write('SVN dump failed\n')
+        print >>sys.stderr, "SVN dump failed"
         result = 1
     os.close(handle)
     tar_output.add(filename, arcname='svn/db.gz')
@@ -309,7 +309,7 @@ print >>sys.stderr, "Backing up", ", ".join( sources )
 # Final output should be stdout.
 finaloutput = sys.stdout
 if sys.stdout.isatty():
-    sys.stderr.write('Refusing to write a tarfile to your terminal\n')
+    print >>sys.stderr, "Refusing to write a tarfile to your terminal"
     sys.exit(1)
 
 # Are we going to be pumping data through gpg?
@@ -349,5 +349,5 @@ for source in sources:
 outputtar.close()
 
 if result != 0:
-    sys.stderr.write('Errors in backup\n')
+    print >>sys.stderr, "Errors in backup"
 sys.exit(result)
