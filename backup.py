@@ -200,9 +200,12 @@ def do_secrets_backup(tar_output):
     else:
         print >>sys.stderr, "No backup ssh keys, assuming not using puppet yet"
 
+    return 0
+
 def do_trac_backup(tar_output):
     os.chdir('/srv/trac')
     tar_output.add('.', arcname='trac', recursive=True)
+    return 0
 
 def do_gerrit_backup(tar_output):
     # Only backup all-projects, which counts as config. Everything else is in
@@ -212,6 +215,8 @@ def do_gerrit_backup(tar_output):
         return
     os.chdir('/home/gerrit/srdata/git/')
     tar_output.add('All-Projects.git', recursive=True)
+
+    return 0
 
 def do_svn_backup(tar_output):
     # Run svnadmin dump through gzip and use that for the backup.
