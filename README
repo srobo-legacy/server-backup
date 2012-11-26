@@ -11,11 +11,11 @@ There is the option of encrypting the output of the backup. The intention being
 that backing up of data can be done by cron on a remote machine under someones
 user account, without us having to worry about additional access controls.
 
-To do this, specify the -e switch. Currently the backup script will instruct gpg
-to use the identity backups@studentrobotics.org. This needs to be a public key
-installed to root's keyring and _signed_ by root as well. These steps shouldn't
-ever make their way into automated configuration, given how ludicrously
-important posession of the backup secret key is.
+To do this, specify the -e switch. Currently the backup script will use whatever
+key identies are in backup.ini, as configured by puppet. These need to be public
+keys installed to root's keyring and _signed_ by root as well. These steps
+shouldn't ever make their way into automated configuration, given how
+important the decisions about who gets access to backups is.
 
 == Room for improvement ==
 
