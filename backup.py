@@ -56,12 +56,12 @@ def do_ldap_backup(tar_output):
     result = 0
     handle, tmpfilename1 = tempfile.mkstemp()
     os.close(handle)
-    ret = os.system('ldapsearch -z 0 -D cn=Manager,o=sr -y /etc/ldap.secret -x -h localhost "(objectClass=*)" -b ou=users,o=sr > {0}'.format(tmpfilename1))
+    ret = os.system('ldapsearch -z 0 -D cn=Manager,o=sr -y /etc/ldap.secret -x -h localhost "(objectClass=posixAccount)" -b ou=users,o=sr > {0}'.format(tmpfilename1))
     if not os.WIFEXITED(ret) or os.WEXITSTATUS(ret) != 0:
         print >>sys.stderr, "Couldn't backup ldap users"
         result = 1
 
-    ret = os.system('ldapsearch -z 0 -D cn=Manager,o=sr -y /etc/ldap.secret -x -h localhost "(objectClass=*)" -b ou=groups,o=sr >> {0}'.format(tmpfilename1))
+    ret = os.system('ldapsearch -z 0 -D cn=Manager,o=sr -y /etc/ldap.secret -x -h localhost "(objectClass=posixGroup)" -b ou=groups,o=sr >> {0}'.format(tmpfilename1))
     if not os.WIFEXITED(ret) or os.WEXITSTATUS(ret) != 0:
         print >>sys.stderr, "Couldn't backup ldap groups"
         result = 1
