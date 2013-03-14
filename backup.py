@@ -190,21 +190,9 @@ def do_secrets_backup(tar_output):
     else:
         print >>sys.stderr, "Gerrit doesn't appear to be installed, skipping"
 
-    if os.path.exists('/srv/secrets/common.csv'):
-        my_addfile('common.csv', '/srv/secrets/common.csv')
-    else:
-        print >>sys.stderr, "common.csv isn't installed, you're not using puppet?"
-
-    if os.path.exists('/home/backup/.ssh/authorized_keys'):
-        my_addfile('login/backups_ssh_keys', '/home/backup/.ssh/authorized_keys')
-    else:
-        print >>sys.stderr, "No backup ssh keys, assuming not using puppet yet"
-
-    if os.path.exists('/home/monitoring/.ssh/authorized_keys'):
-        my_addfile('login/monitoring_ssh_keys', '/home/monitoring/.ssh/authorized_keys')
-    else:
-        print >>sys.stderr, "No monitoring ssh keys, assuming not using puppet yet"
-
+    my_addfile('common.csv', '/srv/secrets/common.csv')
+    my_addfile('login/backups_ssh_keys', '/home/backup/.ssh/authorized_keys')
+    my_addfile('login/monitoring_ssh_keys', '/home/monitoring/.ssh/authorized_keys')
     return 0
 
 def do_trac_backup(tar_output):
