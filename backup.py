@@ -178,17 +178,14 @@ def do_secrets_backup(tar_output):
     my_addfile('login/ssh_host_key', '/etc/ssh/ssh_host_key')
     my_addfile('login/ssh_host_key.pub', '/etc/ssh/ssh_host_key.pub')
 
-    if os.path.exists('/home/gerrit'):
-        my_addfile('gerrit/gerrit_ssh_host_dsa_key',
-                   '/home/gerrit/srdata/etc/ssh_host_dsa_key')
-        my_addfile('gerrit/gerrit_ssh_host_dsa_key.pub',
-                   '/home/gerrit/srdata/etc/ssh_host_dsa_key.pub')
-        my_addfile('gerrit/gerrit_ssh_host_rsa_key',
-                   '/home/gerrit/srdata/etc/ssh_host_rsa_key')
-        my_addfile('gerrit/gerrit_ssh_host_rsa_key.pub',
-                   '/home/gerrit/srdata/etc/ssh_host_rsa_key.pub')
-    else:
-        print >>sys.stderr, "Gerrit doesn't appear to be installed, skipping"
+    my_addfile('gerrit/gerrit_ssh_host_dsa_key',
+               '/home/gerrit/srdata/etc/ssh_host_dsa_key')
+    my_addfile('gerrit/gerrit_ssh_host_dsa_key.pub',
+               '/home/gerrit/srdata/etc/ssh_host_dsa_key.pub')
+    my_addfile('gerrit/gerrit_ssh_host_rsa_key',
+               '/home/gerrit/srdata/etc/ssh_host_rsa_key')
+    my_addfile('gerrit/gerrit_ssh_host_rsa_key.pub',
+               '/home/gerrit/srdata/etc/ssh_host_rsa_key.pub')
 
     my_addfile('common.csv', '/srv/secrets/common.csv')
     my_addfile('login/backups_ssh_keys', '/home/backup/.ssh/authorized_keys')
@@ -203,9 +200,6 @@ def do_trac_backup(tar_output):
 def do_gerrit_backup(tar_output):
     # Only backup all-projects, which counts as config. Everything else is in
     # mysql.
-    if not os.path.exists('/home/gerrit/'):
-        print >>sys.stderr, "Gerrit not installed; not backing it up"
-        return
     os.chdir('/home/gerrit/srdata/git/')
     tar_output.add('All-Projects.git', recursive=True)
 
