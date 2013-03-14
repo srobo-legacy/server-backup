@@ -190,6 +190,10 @@ def do_secrets_backup(tar_output):
     my_addfile('common.csv', '/srv/secrets/common.csv')
     my_addfile('login/backups_ssh_keys', '/home/backup/.ssh/authorized_keys')
     my_addfile('login/monitoring_ssh_keys', '/home/monitoring/.ssh/authorized_keys')
+
+    my_addfile('tickets/config.ini', '/var/www/html/tickets/tickets/webapi/config.ini')
+    my_addfile('tickets/ticket.key', '/var/www/html/tickets/tickets/ticket.key')
+
     return 0
 
 def do_trac_backup(tar_output):
