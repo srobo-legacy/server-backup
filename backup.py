@@ -51,7 +51,7 @@ def do_ide_backup(tar_output):
 
 def do_ldap_backup(tar_output):
     # Produce an ldif of all users and groups. All other ldap objects, such as
-    # the organizational units and the Manager entity, are managed by puppet in 
+    # the organizational units and the Manager entity, are managed by puppet in
     # the future.
     result = 0
     handle, tmpfilename1 = tempfile.mkstemp()
@@ -73,7 +73,7 @@ def do_ldap_backup(tar_output):
     # during backup restore would be an error.
 
     make_modify = ["cn=shell-users,ou=groups,o=sr", "cn=mentors,ou=groups,o=sr",
-		   "cn=srusers,ou=groups,o=sr"]
+                    "cn=srusers,ou=groups,o=sr"]
     remove = ["uid=ide,ou=users,o=sr", "uid=anon,ou=users,o=sr"]
 
     # This class hooks into processing an ldif
@@ -252,7 +252,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('what', help='What data to back up. One of: ' + what_values,
                     nargs = "*")
 parser.add_argument('-e', help='Encrypt output. Requires gpg_keyring',
-		                    action='store_true')
+                    action='store_true')
 
 args = parser.parse_args()
 
