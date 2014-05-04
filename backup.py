@@ -55,6 +55,12 @@ def do_team_status_images_backup(tar_output):
     tar_output.add('.', arcname='team_status_images', recursive=True)
     return 0
 
+def do_forum_attachments_backup(tar_output):
+    tsimg_location = config.get('forum_attachments', 'location')
+    os.chdir(tsimg_location)
+    tar_output.add('.', arcname='forum_attachments', recursive=True)
+    return 0
+
 def do_ldap_backup(tar_output):
     # Produce an ldif of all users and groups. All other ldap objects, such as
     # the organizational units and the Manager entity, are managed by puppet in
@@ -249,6 +255,7 @@ things = { 'ldap': do_ldap_backup,
            'secrets' : do_secrets_backup,
            'ide' : do_ide_backup,
            'team_status_images' : do_team_status_images_backup,
+           'forum_attachments' : do_forum_attachments_backup,
            'trac' : do_trac_backup,
            'gerrit' : do_gerrit_backup,
            'svn' : do_svn_backup,
