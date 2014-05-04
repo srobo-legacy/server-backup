@@ -23,7 +23,7 @@ if not os.path.exists(backupfile):
     print >>sys.stderr, "No backup config file at {0}".format(backupfile)
     sys.exit(1)
 
-config.read("{0}/backup.ini".format(thisdir))
+config.read(backupfile)
 
 # A series of backup functions. They all take a tarfile object and put relevant
 # data into them.
