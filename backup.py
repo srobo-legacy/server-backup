@@ -190,13 +190,13 @@ def do_secrets_backup(tar_output):
     my_addfile('login/ssh_host_key', '/etc/ssh/ssh_host_key')
     my_addfile('login/ssh_host_key.pub', '/etc/ssh/ssh_host_key.pub')
 
-    my_addfile('gerrit/gerrit_ssh_host_dsa_key',
+    my_addfile('gerrit/ssh_host_dsa_key',
                '/home/gerrit/srdata/etc/ssh_host_dsa_key')
-    my_addfile('gerrit/gerrit_ssh_host_dsa_key.pub',
+    my_addfile('gerrit/ssh_host_dsa_key.pub',
                '/home/gerrit/srdata/etc/ssh_host_dsa_key.pub')
-    my_addfile('gerrit/gerrit_ssh_host_rsa_key',
+    my_addfile('gerrit/ssh_host_rsa_key',
                '/home/gerrit/srdata/etc/ssh_host_rsa_key')
-    my_addfile('gerrit/gerrit_ssh_host_rsa_key.pub',
+    my_addfile('gerrit/ssh_host_rsa_key.pub',
                '/home/gerrit/srdata/etc/ssh_host_rsa_key.pub')
 
     my_addfile('common.csv', '/srv/secrets/common.csv')
