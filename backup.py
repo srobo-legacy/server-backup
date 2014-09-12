@@ -179,8 +179,8 @@ def do_secrets_backup(tar_output):
        my_addfile('https/server.crt',
                   '/etc/pki/tls/certs/server.crt')
 
-    if os.path.exists('/etc/pki/tls/certs/gd_bundle.crt'):
-        my_addfile('https/gd_bundle.crt', '/etc/pki/tls/certs/gd_bundle.crt')
+    if os.path.exists('/etc/pki/tls/certs/comodo_bundle.crt'):
+        my_addfile('https/comodo_bundle.crt', '/etc/pki/tls/certs/comodo_bundle.crt')
 
     my_addfile('https/server.key', '/etc/pki/tls/private/server.key')
     my_addfile('login/ssh_host_dsa_key', '/etc/ssh/ssh_host_dsa_key')
