@@ -85,8 +85,7 @@ def do_ldap_backup(tar_output):
     # during backup restore would be an error.
 
     make_modify = ["cn=shell-users,ou=groups,o=sr", "cn=mentors,ou=groups,o=sr",
-                    "cn=srusers,ou=groups,o=sr", "cn=withdrawn,ou=groups,o=sr",
-                    "cn=git-admin,ou=groups,o=sr"]
+                    "cn=srusers,ou=groups,o=sr", "cn=withdrawn,ou=groups,o=sr"]
     remove = ["uid=ide,ou=users,o=sr", "uid=anon,ou=users,o=sr"]
 
     # This class hooks into processing an ldif
