@@ -246,6 +246,7 @@ def do_nemesis_backup(tar_output):
     # Backup contents of nemjsis sqlite database. Use sqlite backup command to
     # create a backup first. This essentially copies the db file, but performs
     # all the required lock dancing.
+    result = 0
     dblocation = config.get('nemesis', 'dblocation')
     handle, filename = tempfile.mkstemp()
     backupcall = subprocess.Popen(['echo', '.backup',
