@@ -248,15 +248,18 @@ def do_nemesis_backup(tar_output):
     # all the required lock dancing.
     dblocation = config.get('nemesis', 'dblocation')
     handle, filename = tempfile.mkstemp()
-    backupcall = subprocess.Popen(['echo', '.backup {0}'.format(filename),
+    backupcall = subprocess.Popen(['echo', '.backup',
                                   'sqlite3', '{0}'.format(dblocation)],
+                                   stdout=subprocess.PIPE,
                                   stderr=open('/dev/null', 'w'))
+    gzipcall = subprocess.Popen(['gzip'], stdin=backupcall.stdout, stdout=handle)
     backupcall.wait()
-    if backupcall.returncode != 0:
+    gzipcall.wait()
+    if backupcall.returncode != 0 or gzipcall.returncode != 0:
         print >>sys.stderr, "Nemesis DB dump failed"
         result = 1
     os.close(handle)
-    tar_output.add(filename, arcname='nemesis/sqlite3_dump')
+    tar_output.add(filename, arcname='nemesis/sqlite3_dump.gz')
     os.unlink(filename)
     return result
 
