@@ -242,6 +242,24 @@ def do_svn_backup(tar_output):
     os.unlink(filename)
     return result
 
+def do_nemesis_backup(tar_output):
+    # Backup contents of nemjsis sqlite database. Use sqlite backup command to
+    # create a backup first. This essentially copies the db file, but performs
+    # all the required lock dancing.
+    dblocation = config.get('nemesis', 'dblocation')
+    handle, filename = tempfile.mkstemp()
+    backupcall = subprocess.Popen(['echo', '.backup {0}'.format(filename),
+                                  'sqlite3', '{0}'.format(dblocation)],
+                                  stderr=open('/dev/null', 'w'))
+    backupcall.wait()
+    if backupcall.returncode != 0:
+        print >>sys.stderr, "Nemesis DB dump failed"
+        result = 1
+    os.close(handle)
+    tar_output.add(filename, arcname='nemesis/sqlite3_dump')
+    os.unlink(filename)
+    return result
+
 def do_all_backup(tar_output):
     result = 0
     for i in things.keys():
@@ -262,6 +280,7 @@ things = { 'ldap': do_ldap_backup,
            'trac' : do_trac_backup,
            'gerrit' : do_gerrit_backup,
            'svn' : do_svn_backup,
+           'nemesis' : do_nemesis_backup,
          }
 
 what_values = ', '.join(things.keys())
