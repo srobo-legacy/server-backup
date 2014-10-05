@@ -249,8 +249,9 @@ def do_nemesis_backup(tar_output):
     result = 0
     dblocation = config.get('nemesis', 'dblocation')
     handle, filename = tempfile.mkstemp()
-    backupcall = subprocess.Popen(['echo', '.backup',
-                                  'sqlite3', '{0}'.format(dblocation)],
+    # sh -c 'echo .dump | sqlite3 /srv/blah/nemesis' | gzip
+    backupcall = subprocess.Popen(['sh', '-c', '\'', 'echo', '.dump', '|',
+                                  'sqlite3', '{0}'.format(dblocation), '\''],
                                    stdout=subprocess.PIPE,
                                   stderr=open('/dev/null', 'w'))
     gzipcall = subprocess.Popen(['gzip'], stdin=backupcall.stdout, stdout=handle)
