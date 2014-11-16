@@ -268,6 +268,10 @@ def do_nemesis_backup(tar_output):
     dblocation = config.get('nemesis', 'dblocation')
     return do_sqlite_backup("Nemesis", dblocation, "nemesis/", tar_output)
 
+def do_fritter_backup(tar_output):
+    dblocation = config.get('fritter', 'dblocation')
+    return do_sqlite_backup("Fritter", dblocation, "fritter/", tar_output)
+
 def do_all_backup(tar_output):
     result = 0
     for i in things.keys():
@@ -289,6 +293,7 @@ things = { 'ldap': do_ldap_backup,
            'gerrit' : do_gerrit_backup,
            'svn' : do_svn_backup,
            'nemesis' : do_nemesis_backup,
+           'fritter' : do_fritter_backup,
          }
 
 what_values = ', '.join(things.keys())
