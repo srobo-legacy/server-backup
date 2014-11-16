@@ -242,12 +242,11 @@ def do_svn_backup(tar_output):
     os.unlink(filename)
     return result
 
-def do_nemesis_backup(tar_output):
-    # Backup contents of nemjsis sqlite database. Use sqlite backup command to
+def do_sqlite_backup(comp_name, dblocation, arcname, tar_output):
+    # Backup contents of a sqlite database. Use sqlite backup command to
     # create a backup first. This essentially copies the db file, but performs
     # all the required lock dancing.
     result = 0
-    dblocation = config.get('nemesis', 'dblocation')
     handle, filename = tempfile.mkstemp()
     # sh -c 'echo .dump | sqlite3 /srv/blah/nemesis' | gzip
     backupcall = subprocess.Popen(['sh', '-c', '\'', 'echo', '.dump', '|',
@@ -258,12 +257,16 @@ def do_nemesis_backup(tar_output):
     backupcall.wait()
     gzipcall.wait()
     if backupcall.returncode != 0 or gzipcall.returncode != 0:
-        print >>sys.stderr, "Nemesis DB dump failed"
+        print >>sys.stderr, "{0} DB dump failed".format(comp_name)
         result = 1
     os.close(handle)
-    tar_output.add(filename, arcname='nemesis/sqlite3_dump.gz')
+    tar_output.add(filename, arcname=arcname + 'sqlite3_dump.gz')
     os.unlink(filename)
     return result
+
+def do_nemesis_backup(tar_output):
+    dblocation = config.get('nemesis', 'dblocation')
+    return do_sqlite_backup("Nemesis", dblocation, "nemesis/", tar_output)
 
 def do_all_backup(tar_output):
     result = 0
