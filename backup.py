@@ -248,9 +248,7 @@ def do_sqlite_backup(comp_name, dblocation, arcname, tar_output):
     # all the required lock dancing.
     result = 0
     handle, filename = tempfile.mkstemp()
-    # sh -c 'echo .dump | sqlite3 /srv/blah/nemesis' | gzip
-    backupcall = subprocess.Popen(['sh', '-c', '\'', 'echo', '.dump', '|',
-                                  'sqlite3', '{0}'.format(dblocation), '\''],
+    backupcall = subprocess.Popen(['sqlite3', dblocation, '.dump'],
                                    stdout=subprocess.PIPE,
                                   stderr=open('/dev/null', 'w'))
     gzipcall = subprocess.Popen(['gzip'], stdin=backupcall.stdout, stdout=handle)
