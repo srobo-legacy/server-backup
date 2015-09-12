@@ -27,10 +27,10 @@ todays_filename = "daily/" + filename
 
 lefile = open(todays_filename, 'w')
 
-# SSH into badger and run the backup script, generating an encrypted backup
+# SSH into saffron and run the backup script, generating an encrypted backup
 # that's pumped into the output file. You can parametise the hostname/account
 # when we have more than one server where we care about the data.
-subprocess.call(['ssh', '-i', '/home/jmorse/.ssh/backup_rsa', 'backup@badger.studentrobotics.org', 'sudo', '/srv/backup/backup.py', '-e', '--', 'all', '-svn'], stdout=lefile)
+subprocess.call(['ssh', '-i', '/home/jmorse/.ssh/backup_rsa', 'backup@saffron.studentrobotics.org', 'sudo', '/srv/backup/backup.py', '-e', '--', 'all', '-svn'], stdout=lefile)
 
 # If it's Sunday or the 1st of the month, link in a weekly/monthly backup.
 if thedate.weekday() == 6:
