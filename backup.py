@@ -200,7 +200,7 @@ def do_secrets_backup(tar_output):
     my_addfile('gerrit/ssh_host_rsa_key.pub',
                '/home/gerrit/srdata/etc/ssh_host_rsa_key.pub')
 
-    my_addfile('common.csv', '/srv/secrets/common.csv')
+    my_addfile('saffron.studentrobotics.org.yaml', '/srv/secrets/saffron.studentrobotics.org.yaml')
     my_addfile('login/backups_ssh_keys', '/home/backup/.ssh/authorized_keys')
     my_addfile('login/monitoring_ssh_keys', '/home/monitoring/.ssh/authorized_keys')
 
