@@ -184,23 +184,10 @@ def do_secrets_backup(tar_output):
         my_addfile('https/comodo_bundle.crt', '/etc/pki/tls/certs/comodo_bundle.crt')
 
     my_addfile('https/server.key', '/etc/pki/tls/private/server.key')
-    my_addfile('login/ssh_host_dsa_key', '/etc/ssh/ssh_host_dsa_key')
-    my_addfile('login/ssh_host_dsa_key.pub', '/etc/ssh/ssh_host_dsa_key.pub')
     my_addfile('login/ssh_host_rsa_key', '/etc/ssh/ssh_host_rsa_key')
     my_addfile('login/ssh_host_rsa_key.pub', '/etc/ssh/ssh_host_rsa_key.pub')
-    my_addfile('login/ssh_host_key', '/etc/ssh/ssh_host_key')
-    my_addfile('login/ssh_host_key.pub', '/etc/ssh/ssh_host_key.pub')
 
-    my_addfile('gerrit/ssh_host_dsa_key',
-               '/home/gerrit/srdata/etc/ssh_host_dsa_key')
-    my_addfile('gerrit/ssh_host_dsa_key.pub',
-               '/home/gerrit/srdata/etc/ssh_host_dsa_key.pub')
-    my_addfile('gerrit/ssh_host_rsa_key',
-               '/home/gerrit/srdata/etc/ssh_host_rsa_key')
-    my_addfile('gerrit/ssh_host_rsa_key.pub',
-               '/home/gerrit/srdata/etc/ssh_host_rsa_key.pub')
-
-    my_addfile('saffron.studentrobotics.org.yaml', '/srv/secrets/saffron.studentrobotics.org.yaml')
+    my_addfile('patience.studentrobotics.org.yaml', '/srv/secrets/patience.studentrobotics.org.yaml')
     my_addfile('login/backups_ssh_keys', '/home/backup/.ssh/authorized_keys')
     my_addfile('login/monitoring_ssh_keys', '/home/monitoring/.ssh/authorized_keys')
 
