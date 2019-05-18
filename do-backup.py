@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 """
 A script to perform daily/weekly/monthly backups.
@@ -17,13 +17,13 @@ import subprocess
 import glob
 
 # Some privacy please
-os.umask(0177)
+os.umask(0o177)
 # Work out where to dump all our data
 os.chdir(os.path.dirname(__file__))
 
 # No options are required
 if len(sys.argv) != 1:
-    print >>sys.stderr, "Usage: do-backup.py"
+    print("Usage: do-backup.py", file=sys.stderr)
     sys.exit(1)
 
 # Work out what todays date is, and what to call the backup file. Format is
