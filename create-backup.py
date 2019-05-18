@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 """
 A script to create a backup of a Student Robotics server.
@@ -9,7 +9,7 @@ file, optionally compressing and encrypting that file.
 
 import glob, os, sys
 import tarfile
-import ConfigParser
+import configparser
 import time
 import tempfile
 import argparse
@@ -18,17 +18,17 @@ import subprocess
 import ldap
 from ldif import LDIFParser,LDIFWriter
 
-os.umask(0177)
+os.umask(0o177)
 
 # Read our config
-config = ConfigParser.SafeConfigParser()
+config = configparser.SafeConfigParser()
 
 # What's the location of *this* file?
 thisdir = os.path.dirname(__file__)
 backupfile = '{0}/backup.ini'.format(thisdir)
 
 if not os.path.exists(backupfile):
-    print >>sys.stderr, "No backup config file at {0}".format(backupfile)
+    print("No backup config file at {0}".format(backupfile), file=sys.stderr)
     sys.exit(1)
 
 config.read(backupfile)
@@ -78,12 +78,12 @@ def do_ldap_backup(tar_output):
     os.close(handle)
     ret = os.system('ldapsearch -LLL -z 0 -D cn=Manager,o=sr -y /etc/ldap.secret -x -h localhost "(objectClass=posixAccount)" -b ou=users,o=sr > {0}'.format(tmpfilename1))
     if not os.WIFEXITED(ret) or os.WEXITSTATUS(ret) != 0:
-        print >>sys.stderr, "Couldn't backup ldap users"
+        print("Couldn't backup ldap users", file=sys.stderr)
         result = 1
 
     ret = os.system('ldapsearch -LLL -z 0 -D cn=Manager,o=sr -y /etc/ldap.secret -x -h localhost "(objectClass=posixGroup)" -b ou=groups,o=sr >> {0}'.format(tmpfilename1))
     if not os.WIFEXITED(ret) or os.WEXITSTATUS(ret) != 0:
-        print >>sys.stderr, "Couldn't backup ldap groups"
+        print("Couldn't backup ldap groups", file=sys.stderr)
         result = 1
 
     # Code below procured from ldif parser documentation. Is fed an ldap,
@@ -158,7 +158,7 @@ def do_mysql_backup(tar_output):
         os.close(handle)
         ret = os.system("mysqldump {0} > {1}".format(s, filename))
         if not os.WIFEXITED(ret) or os.WEXITSTATUS(ret) != 0:
-            print >>sys.stderr, "Couldn't dump database {0}".format(s)
+            print("Couldn't dump database {0}".format(s), file=sys.stderr)
             result = 1
             os.unlink(filename)
             continue
@@ -243,7 +243,7 @@ def do_svn_backup(tar_output):
     admincall.wait()
     gzipcall.wait()
     if admincall.returncode != 0 or gzipcall.returncode != 0:
-        print >>sys.stderr, "SVN dump failed"
+        print("SVN dump failed", file=sys.stderr)
         result = 1
     os.close(handle)
     tar_output.add(filename, arcname='svn/db.gz')
@@ -263,7 +263,7 @@ def do_sqlite_backup(comp_name, dblocation, arcname, tar_output):
     backupcall.wait()
     gzipcall.wait()
     if backupcall.returncode != 0 or gzipcall.returncode != 0:
-        print >>sys.stderr, "{0} DB dump failed".format(comp_name)
+        print("{0} DB dump failed".format(comp_name), file=sys.stderr)
         result = 1
     os.close(handle)
     tar_output.add(filename, arcname=arcname + 'sqlite3_dump.gz')
@@ -327,13 +327,13 @@ for desc in args.what:
         # Allow people to try and backup git, and tell them how to do it properly.
         # Given the nature of git repos, rsync is the most efficient way of performing
         # this backup.
-        print "Run `rsync -az optimus:/srv/git/ ./git/` to backup git into the 'git' dir"
+        print("Run `rsync -az optimus:/srv/git/ ./git/` to backup git into the 'git' dir")
         sys.exit(1)
 
     if name == "all":
         "All the things"
         if exclude:
-            print >>sys.stderr, "Excluding all is not supported -- aborting."
+            print("Excluding all is not supported -- aborting.", file=sys.stderr)
             exit(1)
 
         for v in things.keys():
@@ -342,7 +342,7 @@ for desc in args.what:
     else:
         if name not in things:
             "That thing has no backup function"
-            print >>sys.stderr, "No backup definition for", name
+            print("No backup definition for", name, file=sys.stderr)
             parser.parse_args(['-h'])   # Hack to show the help.
             sys.exit(1)
 
@@ -350,17 +350,17 @@ for desc in args.what:
             try:
                 sources.remove( name )
             except KeyError:
-                print >>sys.stderr, "Cannot exclude '{0}' as it is not already included.".format(name)
+                print("Cannot exclude '{0}' as it is not already included.".format(name), file=sys.stderr)
                 exit(1)
         else:
             sources.add( name )
 
-print >>sys.stderr, "Backing up", ", ".join( sources )
+print("Backing up", ", ".join( sources ), file=sys.stderr)
 
 # Final output should be stdout.
 finaloutput = sys.stdout
 if sys.stdout.isatty():
-    print >>sys.stderr, "Refusing to write a tarfile to your terminal"
+    print("Refusing to write a tarfile to your terminal", file=sys.stderr)
     sys.exit(1)
 
 # Are we going to be pumping data through gpg?
@@ -394,11 +394,11 @@ for source in sources:
     newresult = backup_func(outputtar)
 
     if newresult != 0:
-        print >>sys.stderr, "Failed to backup {0} (exit code {1})".format( source, newresult )
+        print("Failed to backup {0} (exit code {1})".format( source, newresult ), file=sys.stderr)
         result = 1
 
 outputtar.close()
 
 if result != 0:
-    print >>sys.stderr, "Errors in backup"
+    print("Errors in backup", file=sys.stderr)
 sys.exit(result)
