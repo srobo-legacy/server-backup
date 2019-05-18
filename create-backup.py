@@ -36,7 +36,7 @@ config.read(backupfile)
 # A series of backup functions. They all take a tarfile object and put relevant
 # data into them.
 
-def do_ide_backup(tar_output):
+def do_ide_backup(tar_output: tarfile.TarFile) -> int:
     # Back up user repos: we only want the _master_ copies of everything, not
     # the user checkouts of repos, which I understand are only used for staging
     # changes before being pushed back to master.
@@ -57,19 +57,19 @@ def do_ide_backup(tar_output):
     tar_output.add('notifications', arcname='ide/notifications', recursive=True)
     return 0
 
-def do_team_status_images_backup(tar_output):
+def do_team_status_images_backup(tar_output: tarfile.TarFile) -> int:
     tsimg_location = config.get('team_status_images', 'location')
     os.chdir(tsimg_location)
     tar_output.add('.', arcname='team_status_images', recursive=True)
     return 0
 
-def do_forum_attachments_backup(tar_output):
+def do_forum_attachments_backup(tar_output: tarfile.TarFile) -> int:
     tsimg_location = config.get('forum_attachments', 'location')
     os.chdir(tsimg_location)
     tar_output.add('.', arcname='forum_attachments', recursive=True)
     return 0
 
-def do_ldap_backup(tar_output):
+def do_ldap_backup(tar_output: tarfile.TarFile) -> int:
     # Produce an ldif of all users and groups. All other ldap objects, such as
     # the organizational units and the Manager entity, are managed by puppet in
     # the future.
@@ -141,7 +141,7 @@ def do_ldap_backup(tar_output):
     os.unlink(tmpfilename2)
     return result
 
-def do_mysql_backup(tar_output):
+def do_mysql_backup(tar_output: tarfile.TarFile) -> int:
     result = 0
     list_of_dbs_str = config.get("mysql", "databases")
 
@@ -173,8 +173,8 @@ def do_mysql_backup(tar_output):
 
     return result
 
-def do_secrets_backup(tar_output):
-    def my_addfile(tarname, srcfile):
+def do_secrets_backup(tar_output: tarfile.TarFile) -> int:
+    def my_addfile(tarname: str, srcfile: str):
         thestat = os.stat(srcfile)
         info = tarfile.TarInfo(name=tarname)
         info.mtime = time.time()
@@ -219,12 +219,12 @@ def do_secrets_backup(tar_output):
 
     return 0
 
-def do_trac_backup(tar_output):
+def do_trac_backup(tar_output: tarfile.TarFile) -> int:
     os.chdir('/srv/trac')
     tar_output.add('.', arcname='trac', recursive=True)
     return 0
 
-def do_gerrit_backup(tar_output):
+def do_gerrit_backup(tar_output: tarfile.TarFile) -> int:
     # Only backup all-projects, which counts as config. Everything else is in
     # mysql.
     os.chdir('/home/gerrit/srdata/git/')
@@ -232,7 +232,7 @@ def do_gerrit_backup(tar_output):
 
     return 0
 
-def do_svn_backup(tar_output):
+def do_svn_backup(tar_output: tarfile.TarFile) -> int:
     # Run svnadmin dump through gzip and use that for the backup.
     result = 0
     handle, filename = tempfile.mkstemp()
@@ -250,7 +250,7 @@ def do_svn_backup(tar_output):
     os.unlink(filename)
     return result
 
-def do_sqlite_backup(comp_name, dblocation, arcname, tar_output):
+def do_sqlite_backup(comp_name: str, dblocation: str, arcname: str, tar_output: tarfile.TarFile) -> int:
     # Backup contents of a sqlite database. Use sqlite backup command to
     # create a backup first. This essentially copies the db file, but performs
     # all the required lock dancing.
@@ -270,15 +270,15 @@ def do_sqlite_backup(comp_name, dblocation, arcname, tar_output):
     os.unlink(filename)
     return result
 
-def do_nemesis_backup(tar_output):
+def do_nemesis_backup(tar_output: tarfile.TarFile) -> int:
     dblocation = config.get('nemesis', 'dblocation')
     return do_sqlite_backup("Nemesis", dblocation, "nemesis/", tar_output)
 
-def do_fritter_backup(tar_output):
+def do_fritter_backup(tar_output: tarfile.TarFile) -> int:
     dblocation = config.get('fritter', 'dblocation')
     return do_sqlite_backup("Fritter", dblocation, "fritter/", tar_output)
 
-def do_all_backup(tar_output):
+def do_all_backup(tar_output: tarfile.TarFile) -> int:
     result = 0
     for i in things.keys():
         if i != 'all':
