@@ -131,11 +131,7 @@ def do_ldap_backup(tar_output: tarfile.TarFile) -> int:
     infile.close()
     outfile.close()
 
-    statres = os.stat(tmpfilename2)
-    info = tarfile.TarInfo(name="ldap/ldap_backup")
-    info.mtime = time.time()
-    info.size = statres.st_size
-    tar_output.addfile(tarinfo=info, fileobj=open(tmpfilename2, 'rb'))
+    tar_output.add(tmpfilename2, arcname="ldap/ldap_backup")
 
     os.unlink(tmpfilename1)
     os.unlink(tmpfilename2)
@@ -164,11 +160,7 @@ def do_mysql_backup(tar_output: tarfile.TarFile) -> int:
             continue
 
         # And put that into the tarfile.
-        statres = os.stat(filename)
-        info = tarfile.TarInfo(name="mysql/{0}.db".format(s))
-        info.mtime = time.time()
-        info.size = statres.st_size
-        tar_output.addfile(tarinfo=info, fileobj=open(filename, 'rb'))
+        tar_output.add(filename, arcname="mysql/{0}.db".format(s))
         os.unlink(filename)
 
     return result
