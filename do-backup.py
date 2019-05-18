@@ -1,6 +1,14 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
-# A script to perform daily/weekly/monthly backups.
+"""
+A script to perform daily/weekly/monthly backups.
+
+This script runs locally, perhaps triggered by a cron system, and connects to
+the server in question to create and then download a backup.
+
+This script also handles management of the locally stored backups, within
+`daily`, `weekly` and `monthly` folders, with a bias to more recent backups.
+"""
 
 import os
 import sys
@@ -9,13 +17,13 @@ import subprocess
 import glob
 
 # Some privacy please
-os.umask(0177)
+os.umask(0o177)
 # Work out where to dump all our data
 os.chdir(os.path.dirname(__file__))
 
 # No options are required
 if len(sys.argv) != 1:
-    print >>sys.stderr, "Usage: do_backup.py"
+    print("Usage: do-backup.py", file=sys.stderr)
     sys.exit(1)
 
 # Work out what todays date is, and what to call the backup file. Format is
@@ -30,7 +38,7 @@ lefile = open(todays_filename, 'w')
 # SSH into saffron and run the backup script, generating an encrypted backup
 # that's pumped into the output file. You can parametise the hostname/account
 # when we have more than one server where we care about the data.
-subprocess.call(['ssh', '-i', '/home/jmorse/.ssh/backup_rsa', 'backup@saffron.studentrobotics.org', 'sudo', '/srv/backup/backup.py', '-e', '--', 'all', '-svn'], stdout=lefile)
+subprocess.call(['ssh', '-i', '/home/jmorse/.ssh/backup_rsa', 'backup@saffron.studentrobotics.org', 'sudo', '/srv/backup/create-backup.py', '-e', '--', 'all', '-svn'], stdout=lefile)
 
 # If it's Sunday or the 1st of the month, link in a weekly/monthly backup.
 if thedate.weekday() == 6:

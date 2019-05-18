@@ -1,26 +1,34 @@
-#!/usr/bin/python
+#!/usr/bin/python3
+
+"""
+A script to create a backup of a Student Robotics server.
+
+This script runs on the server itself and collects the important data into a tar
+file, optionally compressing and encrypting that file.
+"""
 
 import glob, os, sys
 import tarfile
-import ldap
-from ldif import LDIFParser,LDIFWriter
-import ConfigParser
+import configparser
 import time
 import tempfile
 import argparse
 import subprocess
 
-os.umask(0177)
+import ldap
+from ldif import LDIFParser,LDIFWriter
+
+os.umask(0o177)
 
 # Read our config
-config = ConfigParser.SafeConfigParser()
+config = configparser.SafeConfigParser()
 
 # What's the location of *this* file?
 thisdir = os.path.dirname(__file__)
 backupfile = '{0}/backup.ini'.format(thisdir)
 
 if not os.path.exists(backupfile):
-    print >>sys.stderr, "No backup config file at {0}".format(backupfile)
+    print("No backup config file at {0}".format(backupfile), file=sys.stderr)
     sys.exit(1)
 
 config.read(backupfile)
@@ -28,7 +36,7 @@ config.read(backupfile)
 # A series of backup functions. They all take a tarfile object and put relevant
 # data into them.
 
-def do_ide_backup(tar_output):
+def do_ide_backup(tar_output: tarfile.TarFile) -> int:
     # Back up user repos: we only want the _master_ copies of everything, not
     # the user checkouts of repos, which I understand are only used for staging
     # changes before being pushed back to master.
@@ -49,19 +57,19 @@ def do_ide_backup(tar_output):
     tar_output.add('notifications', arcname='ide/notifications', recursive=True)
     return 0
 
-def do_team_status_images_backup(tar_output):
+def do_team_status_images_backup(tar_output: tarfile.TarFile) -> int:
     tsimg_location = config.get('team_status_images', 'location')
     os.chdir(tsimg_location)
     tar_output.add('.', arcname='team_status_images', recursive=True)
     return 0
 
-def do_forum_attachments_backup(tar_output):
+def do_forum_attachments_backup(tar_output: tarfile.TarFile) -> int:
     tsimg_location = config.get('forum_attachments', 'location')
     os.chdir(tsimg_location)
     tar_output.add('.', arcname='forum_attachments', recursive=True)
     return 0
 
-def do_ldap_backup(tar_output):
+def do_ldap_backup(tar_output: tarfile.TarFile) -> int:
     # Produce an ldif of all users and groups. All other ldap objects, such as
     # the organizational units and the Manager entity, are managed by puppet in
     # the future.
@@ -70,12 +78,12 @@ def do_ldap_backup(tar_output):
     os.close(handle)
     ret = os.system('ldapsearch -LLL -z 0 -D cn=Manager,o=sr -y /etc/ldap.secret -x -h localhost "(objectClass=posixAccount)" -b ou=users,o=sr > {0}'.format(tmpfilename1))
     if not os.WIFEXITED(ret) or os.WEXITSTATUS(ret) != 0:
-        print >>sys.stderr, "Couldn't backup ldap users"
+        print("Couldn't backup ldap users", file=sys.stderr)
         result = 1
 
     ret = os.system('ldapsearch -LLL -z 0 -D cn=Manager,o=sr -y /etc/ldap.secret -x -h localhost "(objectClass=posixGroup)" -b ou=groups,o=sr >> {0}'.format(tmpfilename1))
     if not os.WIFEXITED(ret) or os.WEXITSTATUS(ret) != 0:
-        print >>sys.stderr, "Couldn't backup ldap groups"
+        print("Couldn't backup ldap groups", file=sys.stderr)
         result = 1
 
     # Code below procured from ldif parser documentation. Is fed an ldap,
@@ -116,24 +124,20 @@ def do_ldap_backup(tar_output):
     # relevant modification.
     handle, tmpfilename2 = tempfile.mkstemp()
     os.close(handle)
-    infile = open(tmpfilename1, 'rb')
-    outfile = open(tmpfilename2, 'wb')
+    infile = open(tmpfilename1, 'r')
+    outfile = open(tmpfilename2, 'w')
     parser = MyLDIF(infile, outfile)
     parser.parse()
     infile.close()
     outfile.close()
 
-    statres = os.stat(tmpfilename2)
-    info = tarfile.TarInfo(name="ldap/ldap_backup")
-    info.mtime = time.time()
-    info.size = statres.st_size
-    tar_output.addfile(tarinfo=info, fileobj=open(tmpfilename2, 'r'))
+    tar_output.add(tmpfilename2, arcname="ldap/ldap_backup")
 
     os.unlink(tmpfilename1)
     os.unlink(tmpfilename2)
     return result
 
-def do_mysql_backup(tar_output):
+def do_mysql_backup(tar_output: tarfile.TarFile) -> int:
     result = 0
     list_of_dbs_str = config.get("mysql", "databases")
 
@@ -150,28 +154,24 @@ def do_mysql_backup(tar_output):
         os.close(handle)
         ret = os.system("mysqldump {0} > {1}".format(s, filename))
         if not os.WIFEXITED(ret) or os.WEXITSTATUS(ret) != 0:
-            print >>sys.stderr, "Couldn't dump database {0}".format(s)
+            print("Couldn't dump database {0}".format(s), file=sys.stderr)
             result = 1
             os.unlink(filename)
             continue
 
         # And put that into the tarfile.
-        statres = os.stat(filename)
-        info = tarfile.TarInfo(name="mysql/{0}.db".format(s))
-        info.mtime = time.time()
-        info.size = statres.st_size
-        tar_output.addfile(tarinfo=info, fileobj=open(filename, 'r'))
+        tar_output.add(filename, arcname="mysql/{0}.db".format(s))
         os.unlink(filename)
 
     return result
 
-def do_secrets_backup(tar_output):
-    def my_addfile(tarname, srcfile):
+def do_secrets_backup(tar_output: tarfile.TarFile) -> int:
+    def my_addfile(tarname: str, srcfile: str):
         thestat = os.stat(srcfile)
         info = tarfile.TarInfo(name=tarname)
         info.mtime = time.time()
         info.size = thestat.st_size
-        tar_output.addfile(tarinfo=info, fileobj=open(srcfile))
+        tar_output.addfile(tarinfo=info, fileobj=open(srcfile, 'rb'))
 
     if os.path.exists('/etc/pki/tls/certs/www.studentrobotics.org.crt'):
        my_addfile('https/server.crt',
@@ -198,12 +198,12 @@ def do_secrets_backup(tar_output):
 
     return 0
 
-def do_trac_backup(tar_output):
+def do_trac_backup(tar_output: tarfile.TarFile) -> int:
     os.chdir('/srv/trac')
     tar_output.add('.', arcname='trac', recursive=True)
     return 0
 
-def do_gerrit_backup(tar_output):
+def do_gerrit_backup(tar_output: tarfile.TarFile) -> int:
     # Only backup all-projects, which counts as config. Everything else is in
     # mysql.
     os.chdir('/home/gerrit/srdata/git/')
@@ -211,7 +211,7 @@ def do_gerrit_backup(tar_output):
 
     return 0
 
-def do_svn_backup(tar_output):
+def do_svn_backup(tar_output: tarfile.TarFile) -> int:
     # Run svnadmin dump through gzip and use that for the backup.
     result = 0
     handle, filename = tempfile.mkstemp()
@@ -222,14 +222,14 @@ def do_svn_backup(tar_output):
     admincall.wait()
     gzipcall.wait()
     if admincall.returncode != 0 or gzipcall.returncode != 0:
-        print >>sys.stderr, "SVN dump failed"
+        print("SVN dump failed", file=sys.stderr)
         result = 1
     os.close(handle)
     tar_output.add(filename, arcname='svn/db.gz')
     os.unlink(filename)
     return result
 
-def do_sqlite_backup(comp_name, dblocation, arcname, tar_output):
+def do_sqlite_backup(comp_name: str, dblocation: str, arcname: str, tar_output: tarfile.TarFile) -> int:
     # Backup contents of a sqlite database. Use sqlite backup command to
     # create a backup first. This essentially copies the db file, but performs
     # all the required lock dancing.
@@ -242,22 +242,22 @@ def do_sqlite_backup(comp_name, dblocation, arcname, tar_output):
     backupcall.wait()
     gzipcall.wait()
     if backupcall.returncode != 0 or gzipcall.returncode != 0:
-        print >>sys.stderr, "{0} DB dump failed".format(comp_name)
+        print("{0} DB dump failed".format(comp_name), file=sys.stderr)
         result = 1
     os.close(handle)
     tar_output.add(filename, arcname=arcname + 'sqlite3_dump.gz')
     os.unlink(filename)
     return result
 
-def do_nemesis_backup(tar_output):
+def do_nemesis_backup(tar_output: tarfile.TarFile) -> int:
     dblocation = config.get('nemesis', 'dblocation')
     return do_sqlite_backup("Nemesis", dblocation, "nemesis/", tar_output)
 
-def do_fritter_backup(tar_output):
+def do_fritter_backup(tar_output: tarfile.TarFile) -> int:
     dblocation = config.get('fritter', 'dblocation')
     return do_sqlite_backup("Fritter", dblocation, "fritter/", tar_output)
 
-def do_all_backup(tar_output):
+def do_all_backup(tar_output: tarfile.TarFile) -> int:
     result = 0
     for i in things.keys():
         if i != 'all':
@@ -306,13 +306,13 @@ for desc in args.what:
         # Allow people to try and backup git, and tell them how to do it properly.
         # Given the nature of git repos, rsync is the most efficient way of performing
         # this backup.
-        print "Run `rsync -az optimus:/srv/git/ ./git/` to backup git into the 'git' dir"
+        print("Run `rsync -az optimus:/srv/git/ ./git/` to backup git into the 'git' dir")
         sys.exit(1)
 
     if name == "all":
         "All the things"
         if exclude:
-            print >>sys.stderr, "Excluding all is not supported -- aborting."
+            print("Excluding all is not supported -- aborting.", file=sys.stderr)
             exit(1)
 
         for v in things.keys():
@@ -321,7 +321,7 @@ for desc in args.what:
     else:
         if name not in things:
             "That thing has no backup function"
-            print >>sys.stderr, "No backup definition for", name
+            print("No backup definition for", name, file=sys.stderr)
             parser.parse_args(['-h'])   # Hack to show the help.
             sys.exit(1)
 
@@ -329,17 +329,17 @@ for desc in args.what:
             try:
                 sources.remove( name )
             except KeyError:
-                print >>sys.stderr, "Cannot exclude '{0}' as it is not already included.".format(name)
+                print("Cannot exclude '{0}' as it is not already included.".format(name), file=sys.stderr)
                 exit(1)
         else:
             sources.add( name )
 
-print >>sys.stderr, "Backing up", ", ".join( sources )
+print("Backing up", ", ".join( sources ), file=sys.stderr)
 
 # Final output should be stdout.
-finaloutput = sys.stdout
+finaloutput = sys.stdout.buffer
 if sys.stdout.isatty():
-    print >>sys.stderr, "Refusing to write a tarfile to your terminal"
+    print("Refusing to write a tarfile to your terminal", file=sys.stderr)
     sys.exit(1)
 
 # Are we going to be pumping data through gpg?
@@ -373,11 +373,11 @@ for source in sources:
     newresult = backup_func(outputtar)
 
     if newresult != 0:
-        print >>sys.stderr, "Failed to backup {0} (exit code {1})".format( source, newresult )
+        print("Failed to backup {0} (exit code {1})".format( source, newresult ), file=sys.stderr)
         result = 1
 
 outputtar.close()
 
 if result != 0:
-    print >>sys.stderr, "Errors in backup"
+    print("Errors in backup", file=sys.stderr)
 sys.exit(result)
