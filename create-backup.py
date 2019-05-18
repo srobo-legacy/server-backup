@@ -1,5 +1,12 @@
 #!/usr/bin/python
 
+"""
+A script to create a backup of a Student Robotics server.
+
+This script runs on the server itself and collects the important data into a tar
+file, optionally compressing and encrypting that file.
+"""
+
 import glob, os, sys
 import tarfile
 import ldap

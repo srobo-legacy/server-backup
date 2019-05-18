@@ -7,6 +7,13 @@ These scripts aim to back up data into the same format used for the secrets
 directory in the puppet/server configuration. Given how infrequently restores
 are going to occur, bugs in the layout are likely.
 
+## Basic usage
+
+A copy of this repo is installed onto our servers by the puppet config. You can
+either manually run the `create-backup.py` script via ssh, or use the
+`do-backup.py` script to handle both creating backups and management of local
+backup files.
+
 ## Configuration
 
 Some of the locations and details of things to include are provided via
