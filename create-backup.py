@@ -9,13 +9,14 @@ file, optionally compressing and encrypting that file.
 
 import glob, os, sys
 import tarfile
-import ldap
-from ldif import LDIFParser,LDIFWriter
 import ConfigParser
 import time
 import tempfile
 import argparse
 import subprocess
+
+import ldap
+from ldif import LDIFParser,LDIFWriter
 
 os.umask(0177)
 
