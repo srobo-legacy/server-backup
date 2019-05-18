@@ -124,8 +124,8 @@ def do_ldap_backup(tar_output: tarfile.TarFile) -> int:
     # relevant modification.
     handle, tmpfilename2 = tempfile.mkstemp()
     os.close(handle)
-    infile = open(tmpfilename1, 'rb')
-    outfile = open(tmpfilename2, 'wb')
+    infile = open(tmpfilename1, 'r')
+    outfile = open(tmpfilename2, 'w')
     parser = MyLDIF(infile, outfile)
     parser.parse()
     infile.close()
@@ -135,7 +135,7 @@ def do_ldap_backup(tar_output: tarfile.TarFile) -> int:
     info = tarfile.TarInfo(name="ldap/ldap_backup")
     info.mtime = time.time()
     info.size = statres.st_size
-    tar_output.addfile(tarinfo=info, fileobj=open(tmpfilename2, 'r'))
+    tar_output.addfile(tarinfo=info, fileobj=open(tmpfilename2, 'rb'))
 
     os.unlink(tmpfilename1)
     os.unlink(tmpfilename2)
@@ -168,7 +168,7 @@ def do_mysql_backup(tar_output: tarfile.TarFile) -> int:
         info = tarfile.TarInfo(name="mysql/{0}.db".format(s))
         info.mtime = time.time()
         info.size = statres.st_size
-        tar_output.addfile(tarinfo=info, fileobj=open(filename, 'r'))
+        tar_output.addfile(tarinfo=info, fileobj=open(filename, 'rb'))
         os.unlink(filename)
 
     return result
@@ -179,7 +179,7 @@ def do_secrets_backup(tar_output: tarfile.TarFile) -> int:
         info = tarfile.TarInfo(name=tarname)
         info.mtime = time.time()
         info.size = thestat.st_size
-        tar_output.addfile(tarinfo=info, fileobj=open(srcfile))
+        tar_output.addfile(tarinfo=info, fileobj=open(srcfile, 'rb'))
 
     if os.path.exists('/etc/pki/tls/certs/www.studentrobotics.org.crt'):
        my_addfile('https/server.crt',
@@ -358,7 +358,7 @@ for desc in args.what:
 print("Backing up", ", ".join( sources ), file=sys.stderr)
 
 # Final output should be stdout.
-finaloutput = sys.stdout
+finaloutput = sys.stdout.buffer
 if sys.stdout.isatty():
     print("Refusing to write a tarfile to your terminal", file=sys.stderr)
     sys.exit(1)
